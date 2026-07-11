@@ -81,12 +81,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Play Audio & Start intro transition
     const introPlayer = document.getElementById('introPlayer');
     const bgMusic = document.getElementById('bgMusic');
+    const vinylDisc = document.getElementById('vinylDisc');
+    const stylusArm = document.getElementById('stylusArm');
 
     introPlayer.addEventListener('click', () => {
         bgMusic.play().catch(e => console.log("Audio auto-play blocked"));
-        document.getElementById('stage-intro').style.display = 'none';
-        document.getElementById('stage-content').style.display = 'flex';
-        createFallingParticles();
+        
+        // Trigger record animations
+        if (stylusArm) stylusArm.classList.add('active');
+        if (vinylDisc) {
+            setTimeout(() => {
+                vinylDisc.classList.add('playing');
+            }, 400);
+        }
+
+        // Delay screen switch slightly to let user enjoy the tactile record player touch
+        setTimeout(() => {
+            document.getElementById('stage-intro').style.display = 'none';
+            document.getElementById('stage-content').style.display = 'flex';
+            createFallingParticles();
+        }, 1300);
     });
 
     // 3. Falling Gold Dust Particles Ambient Effect
