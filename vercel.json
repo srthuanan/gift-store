@@ -17,7 +17,8 @@
       "destination": "/demo-stars/:path*"
     },
     {
-      "source": "/((?!assets|favicon.ico).*)"
+      "source": "/((?!assets|favicon.ico).*)",
+      "destination": "/index.html"
     }
   ]
 }
