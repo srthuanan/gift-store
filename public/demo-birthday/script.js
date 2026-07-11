@@ -242,15 +242,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     const average = values / array.length;
                     
-                    // High volume spike detects blow action (average threshold 65+)
-                    if (average > 68) {
+                    // Lowered average threshold to 40 for higher sensitivity (easy blow)
+                    if (average > 40) {
                         extinguishCandle();
                     }
                 };
+
+                // Fallback: Also allow direct click/touch on the flame even if mic is enabled
+                document.getElementById('candleFlame').style.cursor = 'pointer';
+                document.getElementById('candleFlame').addEventListener('click', extinguishCandle);
             })
             .catch(err => {
                 console.error("Mic access denied", err);
-                hintEl.innerText = "Quyền truy cập micro bị chặn. Hãy bấm trực tiếp ngọn lửa trên màn hình để thổi nến!";
+                hintEl.innerText = "Quyền truy cập micro bị chặn hoặc không khả dụng. Hãy chạm trực tiếp vào ngọn nến để thổi!";
                 document.getElementById('candleFlame').style.cursor = 'pointer';
                 document.getElementById('candleFlame').addEventListener('click', extinguishCandle);
             });
