@@ -498,6 +498,48 @@ export default function DemoShowcase() {
                   <span style={{ fontSize: '0.8rem', color: '#ff3366', fontWeight: '600', letterSpacing: '0.5px' }}>
                     QUÉT MÃ QR ĐỂ NHẬN QUÀ TẶNG 🎁
                   </span>
+                  
+                  {/* Download QR Button */}
+                  <button 
+                    onClick={async () => {
+                      try {
+                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(generatedLink)}`;
+                        const response = await fetch(qrUrl);
+                        const blob = await response.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = 'ma_qr_qua_tang.png';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(blobUrl);
+                      } catch (err) {
+                        console.error("Lỗi tải ảnh QR:", err);
+                        alert("Không thể tải trực tiếp. Bạn vui lòng chụp màn hình hoặc lưu ảnh QR trên nhé!");
+                      }
+                    }}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      borderRadius: '8px',
+                      padding: '8px 16px',
+                      color: '#fff',
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      marginTop: '4px',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'}
+                  >
+                    📥 Tải Mã QR Về Máy
+                  </button>
                 </div>
                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px', wordBreak: 'break-all' }}>
                   <span style={S.label}>Hoặc copy đường dẫn riêng</span>
