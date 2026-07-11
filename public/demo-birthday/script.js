@@ -352,17 +352,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const flame = document.getElementById('candleFlame');
         flame.classList.add('blown');
 
-        // Show fireworks and final letter overlay
+        // Show fireworks and transition to secret envelope
         setTimeout(() => {
             const canvasF = document.getElementById('fireworks');
             canvasF.style.display = 'block';
             startFireworksEffect(canvasF);
             
             setTimeout(() => {
-                document.getElementById('letterOverlay').classList.add('show');
-            }, 1500);
+                document.getElementById('stage-blow').style.display = 'none';
+                document.getElementById('stage-envelope').style.display = 'flex';
+            }, 2500);
         }, 600);
     }
+
+    // 6.5. Interactive Envelope Open
+    let isEnvelopeOpened = false;
+    window.openEnvelope = () => {
+        if (isEnvelopeOpened) return;
+        isEnvelopeOpened = true;
+
+        const flap = document.getElementById('envFlap');
+        const letter = document.getElementById('envLetter');
+
+        // Step 1: Open flap
+        flap.classList.add('open');
+
+        // Step 2: Pull out letter card from pocket
+        setTimeout(() => {
+            letter.classList.add('pull-out');
+            
+            // Step 3: Fade in the fullscreen gorgeous letter card overlay
+            setTimeout(() => {
+                document.getElementById('letterOverlay').classList.add('show');
+            }, 1200);
+        }, 600);
+    };
 
     // 7. HTML5 Canvas Fireworks particle effects
     function startFireworksEffect(canvas) {

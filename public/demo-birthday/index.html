@@ -74,6 +74,15 @@
         .mic-badge:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,51,102,0.3); border-color: #ff3366; }
         @keyframes pulseMic { from { box-shadow: 0 0 5px rgba(255, 51, 102, 0.1); } to { box-shadow: 0 0 20px rgba(255, 51, 102, 0.5); } }
         
+        /* Interactive 3D Letter Envelope CSS */
+        .envelope-container { width: 280px; height: 180px; background: #c5a880; border-radius: 8px; position: relative; cursor: pointer; box-shadow: 0 15px 35px rgba(0,0,0,0.5); transition: transform 0.5s; z-index: 10; margin-top: 30px; }
+        .envelope-container:hover { transform: translateY(-5px); }
+        .envelope-flap { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 90px solid #a88354; transform-origin: top center; transition: transform 0.6s; z-index: 5; }
+        .envelope-flap.open { transform: rotateX(180deg); z-index: 1; }
+        .envelope-pocket { position: absolute; bottom: 0; left: 0; width: 280px; height: 110px; background: #c5a880; border-top: 1px solid rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; z-index: 4; }
+        .envelope-letter { position: absolute; bottom: 10px; left: 15px; width: 250px; height: 140px; background: #fffcf0; border-radius: 6px; box-shadow: 0 -5px 15px rgba(0,0,0,0.15); transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #333; font-family: 'Great Vibes', cursive; font-size: 1.8rem; padding: 15px; box-sizing: border-box; text-align: center; }
+        .envelope-letter.pull-out { transform: translateY(-110px) scale(1.05); z-index: 6; height: 200px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+
         /* Stage 4: Finale letter overlay with vintage paper effect */
         .letter-overlay { position: fixed; inset: 0; background: rgba(5, 4, 8, 0.96); backdrop-filter: blur(20px); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 1.2s ease; }
         .letter-overlay.show { opacity: 1; pointer-events: all; }
@@ -195,6 +204,20 @@
         </div>
     </div>
 
+    <!-- NEW STAGE 3.5: VIRTUAL INTERACTIVE ENVELOPE (Bao thư mở thiệp) -->
+    <div id="stage-envelope" class="stage" style="display: none;">
+        <h1 class="title" style="font-size: 2.2rem;">Hộp Quà Bí Mật</h1>
+        <p class="subtitle" style="margin-bottom: 20px;">Hãy chạm vào bao thư để lút mở phong thư tay ký ức</p>
+        
+        <div class="envelope-container" id="envContainer" onclick="openEnvelope()">
+            <div class="envelope-flap" id="envFlap"></div>
+            <div class="envelope-letter" id="envLetter">
+                Chúc mừng sinh nhật!<br>Mở ra xem nhé... ❤️
+            </div>
+            <div class="envelope-pocket"></div>
+        </div>
+    </div>
+
     <!-- STAGE 4: FINALE LETTER -->
     <div class="letter-overlay" id="letterOverlay">
         <div class="letter-card">
@@ -204,6 +227,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html>
