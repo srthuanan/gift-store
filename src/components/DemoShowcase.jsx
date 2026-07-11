@@ -145,6 +145,22 @@ export default function DemoShowcase() {
         "Thông điệp rực sáng kết màn",
         "Tích hợp lời nhắn thoại bí mật"
       ]
+    },
+    {
+      id: "birthday-symphony",
+      name: "Bản Giao Hưởng",
+      url: "/demo-birthday/index.html",
+      price: 349000,
+      priceFormatted: "349.000đ",
+      desc: "Mẫu thiệp chúc mừng sinh nhật siêu đỉnh, cầu kỳ và đầy xúc cảm. Trải nghiệm Bản giao hưởng ký ức đa giác quan, tự tay lật mở tranh màu nước, thổi nến thật qua micro để thắp pháo hoa sinh nhật hoành tráng.",
+      features: [
+        "Thiết kế phong cách rạp chiếu phim (Cinematic)",
+        "Nghệ thuật vẽ chì sketch loang màu nước độc lạ",
+        "Nhạc nền hộp nhạc cổ điển du dương",
+        "Tương tác cảm biến âm thanh THỔI NẾN THẬT qua micro 🕯️",
+        "Hiệu ứng pháo hoa bụi cát nổ tung kết màn",
+        "Thư tình chúc sinh nhật viết tay bí mật"
+      ]
     }
   ];
 
@@ -193,7 +209,11 @@ export default function DemoShowcase() {
 
   const handlePaymentSuccess = async () => {
     const randomId = 'gift_' + Math.random().toString(36).substring(2, 10);
-    const linkPath = templates[activeTab].id === 'love-escape' ? 'demo' : templates[activeTab].id === 'timeline' ? 'demo-timeline' : 'demo-box';
+    let linkPath = 'demo';
+    if (templates[activeTab].id === 'timeline') linkPath = 'demo-timeline';
+    else if (templates[activeTab].id === 'memory-jar') linkPath = 'demo-box';
+    else if (templates[activeTab].id === 'birthday-symphony') linkPath = 'demo-birthday';
+    
     const finalUrl = `${window.location.origin}/${linkPath}/index.html?id=${randomId}&gift=true`;
 
     try {
@@ -402,6 +422,61 @@ export default function DemoShowcase() {
             <div>
               <span style={S.label}>Số điện thoại của bạn *</span>
               <input type="text" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} style={S.input} placeholder="Nhập SĐT..." />
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    if (currentTpl === 'birthday-symphony') {
+      return (
+        <>
+          {namesSection}
+          <div>
+            <span style={S.label}>1. Tải lên 4 ảnh chặng đường (Vẽ Chì & Màu Nước)</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+              {images.map((img, idx) => (
+                <MiniImageUpload key={idx} img={img} idx={idx} onChange={e => handleImageChange(idx, e)} label={`Tranh ${idx + 1}`} />
+              ))}
+            </div>
+          </div>
+          <div>
+            <span style={S.label}>2. Lời nhắn cho từng tranh vẽ kỷ niệm</span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '8px' }}>
+              {wishes.slice(0, 4).map((w, idx) => (
+                <input 
+                  key={idx}
+                  type="text"
+                  value={w.replace('\n', ' ')}
+                  onChange={e => {
+                    const n = [...wishes];
+                    n[idx] = e.target.value;
+                    setWishes(n);
+                  }}
+                  style={S.input}
+                  placeholder={`Văn bản tranh ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '10px' }}>
+            <div>
+              <span style={S.label}>3. Thư chúc mừng sinh nhật kết bài</span>
+              <textarea 
+                value={wishes[4]}
+                onChange={e => {
+                  const n = [...wishes];
+                  n[4] = e.target.value;
+                  setWishes(n);
+                }}
+                rows={2}
+                style={{ ...S.input, resize: 'none' }}
+                placeholder="Lời chúc chúc mừng thổi nến..."
+              />
+            </div>
+            <div>
+              <span style={S.label}>Số điện thoại của bạn *</span>
+              <input type="text" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} style={{ ...S.input, height: '46px', marginTop: '4px' }} placeholder="Nhập SĐT..." />
             </div>
           </div>
         </>
