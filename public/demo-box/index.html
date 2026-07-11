@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hũ Kỷ Niệm Đom Đóm - Love Firefly Match</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Dancing+Script:wght@600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: radial-gradient(circle at 50% 50%, #0d0d1e 0%, #030308 100%); color: #c5a880; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; -ms-overflow-style: none; scrollbar-width: none; }
@@ -36,7 +36,7 @@
         
         /* String & Tag around the neck */
         .jar-string { position: absolute; top: 2px; left: -2px; width: 60px; height: 3px; background: #8b5a2b; border-radius: 1px; }
-        .jar-tag { position: absolute; top: 4px; right: -16px; width: 38px; height: 24px; background: #dfc397; border-radius: 2px; transform: rotate(18deg); border: 1px solid #8b5a2b; display: flex; justify-content: center; align-items: center; font-family: 'Great Vibes', cursive; color: #3d2310; font-size: 0.95rem; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index: 4; }
+        .jar-tag { position: absolute; top: 4px; right: -16px; width: 38px; height: 24px; background: #dfc397; border-radius: 2px; transform: rotate(18deg); border: 1px solid #8b5a2b; display: flex; justify-content: center; align-items: center; font-family: 'Dancing Script', cursive; color: #3d2310; font-size: 0.95rem; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index: 4; }
         
         /* Glass Jar Body */
         .jar-body { width: 114px; height: 156px; border: 3px solid rgba(255, 255, 255, 0.4); border-radius: 15px 15px 22px 22px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%); box-shadow: inset 0 0 18px rgba(255,255,255,0.15), inset -8px 0 12px rgba(255,255,255,0.05), 0 12px 30px rgba(0,0,0,0.5), 0 0 20px rgba(253, 224, 71, 0.05); position: relative; z-index: 2; }
@@ -92,7 +92,7 @@
         .p-caption { font-size: 0.75rem; color: #888; letter-spacing: 0.5px; font-style: italic; margin-top: 5px; }
         
         .polaroid-back { transform: rotateY(180deg); -webkit-transform: rotateY(180deg); background: #fffcf5 url('data:image/svg+xml;utf8,<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="39" x2="40" y2="39" stroke="%23ebd5b3" stroke-width="1"/></svg>'); padding: 25px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .p-handwritten-letter { font-family: 'Great Vibes', cursive; font-size: 1.7rem; color: #3d2310; line-height: 1.35; text-align: center; }
+        .p-handwritten-letter { font-family: 'Dancing Script', cursive; font-size: 1.7rem; color: #3d2310; line-height: 1.35; text-align: center; }
         
         .p-close-btn { margin-top: 15px; background: #5c0612; color: #dfc397; border: 1px solid #dfc397; border-radius: 4px; padding: 6px 16px; font-size: 0.8rem; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; font-family: 'Montserrat', sans-serif; transition: all 0.3s; z-index: 10; }
         .p-close-btn:hover { background: #dfc397; color: #5c0612; }
@@ -109,7 +109,7 @@
         .final-card { width: 285px; background: #5c0612; padding: 30px 22px; border: 2px solid #dfc397; outline: 6px solid #5c0612; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 8px; text-align: center; transform: translateY(40px); transition: transform 0.8s ease; position: relative; }
         .final-letter-overlay.show .final-card { transform: translateY(0); }
         .final-title { font-family: 'Cinzel Decorative', serif; font-size: 1.35rem; color: #dfc397; margin-bottom: 15px; letter-spacing: 1px; }
-        .final-text { font-family: 'Great Vibes', cursive; font-size: 1.7rem; color: #fffcf5; line-height: 1.35; margin-bottom: 15px; }
+        .final-text { font-family: 'Dancing Script', cursive; font-size: 1.7rem; color: #fffcf5; line-height: 1.35; margin-bottom: 15px; }
 
         /* Neon Love Counter */
         .love-counter { font-size: 2.6rem; font-weight: bold; color: #fef08a; text-shadow: 0 0 10px #facc15, 0 0 20px #eab308; font-family: monospace; letter-spacing: 1px; margin-top: 15px; }
