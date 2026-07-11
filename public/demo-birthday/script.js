@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data) {
                     applyData({
                         images: data.images,
-                        wishes: data.wishes
+                        wishes: data.wishes,
+                        anniversary_date: data.anniversary_date
                     });
                 }
             } catch(e) {
@@ -56,8 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let targetLoveDays = 1258;
 
     function applyData(data) {
-        if (data.anniversaryDate) {
-            targetLoveDays = parseInt(data.anniversaryDate) || 1258;
+        const rawDays = data.anniversary_date || data.anniversaryDate;
+        if (rawDays) {
+            targetLoveDays = parseInt(rawDays) || 1258;
             const daysEl = document.getElementById('loveDaysVal');
             if (daysEl) daysEl.innerText = targetLoveDays;
         }
