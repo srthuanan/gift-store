@@ -260,11 +260,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let ballX = 15;
     let ballY = 15;
     const mazeWalls = [
-        { x: 100, y: 0, w: 6, h: 100 },
-        { x: 0, y: 120, w: 100, h: 6 },
-        { x: 160, y: 60, w: 140, h: 6 },
-        { x: 160, y: 60, w: 6, h: 180 },
-        { x: 100, y: 240, w: 100, h: 6 }
+        { x: 80, y: 0, w: 6, h: 160 },
+        { x: 80, y: 220, w: 6, h: 80 },
+        { x: 160, y: 140, w: 140, h: 6 },
+        { x: 160, y: 220, w: 6, h: 80 }
     ];
 
     function resetMaze() {
