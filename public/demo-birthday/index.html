@@ -34,6 +34,11 @@
         h1.title { font-family: 'Cinzel Decorative', serif; font-size: 2.8rem; color: #fff; text-shadow: 0 0 20px rgba(223, 195, 151, 0.5), 0 0 40px rgba(255, 51, 102, 0.3); margin: 0 0 10px; }
         .subtitle { font-size: 0.9rem; letter-spacing: 3px; color: #8c8c94; text-transform: uppercase; }
         
+        /* Puzzle Game styling */
+        .puzzle-container { width: 300px; height: 300px; border: 3px solid #dfc397; border-radius: 12px; position: relative; background: #121016; box-shadow: 0 20px 45px rgba(0,0,0,0.8); display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 4px; padding: 4px; box-sizing: border-box; overflow: hidden; }
+        .puzzle-piece { width: 100%; height: 100%; border-radius: 6px; cursor: grab; background-size: 292px 292px; background-repeat: no-repeat; border: 1px solid rgba(223, 195, 151, 0.25); box-sizing: border-box; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
+        .puzzle-piece.selected { border: 2px solid #ff3366; box-shadow: 0 0 15px #ff3366; z-index: 99; transform: scale(1.05); }
+        
         /* Scroll content nodes */
         .memory-track { max-width: 700px; margin: 0 auto; z-index: 5; position: relative; }
         .memory-node { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-bottom: 150px; opacity: 0; transform: translateY(100px); transition: all 1.5s cubic-bezier(0.1, 0.8, 0.2, 1); }
@@ -153,6 +158,23 @@
         <button class="p-btn" style="margin: 60px 0 100px;" onclick="goToBlowStage()">Tiếp Tục Chặng Cuối ➔</button>
     </div>
 
+    <!-- NEW STAGE 2.5: PUZZLE GAME -->
+    <div id="stage-puzzle" class="stage" style="display: none;">
+        <h1 class="title" style="font-size: 2rem;">Mảnh Ghép Ký Ức</h1>
+        <p class="subtitle" style="margin-bottom: 30px; max-width: 450px; line-height: 1.6;">Chạm vào hai mảnh ghép bất kỳ để đổi vị trí cho nhau và tái hiện bức ảnh đầu tiên ngọt ngào của chúng mình!</p>
+        
+        <div class="puzzle-container" id="puzzleBoard">
+            <!-- 4 Puzzle Pieces -->
+            <div class="puzzle-piece" id="piece-0" onclick="selectPiece(0)" style="background-position: 0px 0px;"></div>
+            <div class="puzzle-piece" id="piece-1" onclick="selectPiece(1)" style="background-position: -144px 0px;"></div>
+            <div class="puzzle-piece" id="piece-2" onclick="selectPiece(2)" style="background-position: 0px -144px;"></div>
+            <div class="puzzle-piece" id="piece-3" onclick="selectPiece(3)" style="background-position: -144px -144px;"></div>
+        </div>
+        
+        <p id="puzzleSuccessMsg" style="color: #22c55e; font-weight: 600; margin-top: 20px; opacity: 0; transition: opacity 0.5s;">🎉 Ghép hình thành công! Mảnh ghép hoàn hảo chính là bạn.</p>
+        <button class="p-btn" id="puzzleNextBtn" style="margin-top: 20px; display: none;" onclick="goToRealBlowStage()">Đến Bánh Kem Sinh Nhật ➔</button>
+    </div>
+
     <!-- STAGE 3: BLOW CANDLE -->
     <div id="stage-blow" class="stage" style="display: none;">
         <div class="blow-stage">
@@ -182,6 +204,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
 </body>
 </html>

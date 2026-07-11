@@ -214,9 +214,76 @@ document.addEventListener('DOMContentLoaded', () => {
         transition();
     }
 
-    // 5. Navigation from scroll stage to candle blow
+    // 5. Navigation from scroll stage to puzzle stage
     window.goToBlowStage = () => {
         document.getElementById('stage-content').style.display = 'none';
+        document.getElementById('stage-puzzle').style.display = 'flex';
+        initPuzzleGame();
+    };
+
+    // Puzzle Game Logic
+    let puzzleOrder = [2, 0, 3, 1]; // Shuffled initial order
+    const correctOrder = [0, 1, 2, 3];
+    let selectedPieceIndex = null;
+
+    function initPuzzleGame() {
+        const board = document.getElementById('puzzleBoard');
+        const pieces = board.querySelectorAll('.puzzle-piece');
+        
+        pieces.forEach((piece, idx) => {
+            piece.style.backgroundImage = `url('${customImages[0]}')`;
+            updatePieceDisplay(idx);
+        });
+    }
+
+    function updatePieceDisplay(index) {
+        const piece = document.getElementById(`piece-${index}`);
+        const value = puzzleOrder[index];
+        // Calculate background offsets for 2x2 grid
+        const xOffset = (value % 2) * -144;
+        const yOffset = Math.floor(value / 2) * -144;
+        piece.style.backgroundPosition = `${xOffset}px ${yOffset}px`;
+    }
+
+    window.selectPiece = (index) => {
+        const piece = document.getElementById(`piece-${index}`);
+        
+        if (selectedPieceIndex === null) {
+            selectedPieceIndex = index;
+            piece.classList.add('selected');
+        } else {
+            // Swap places
+            const prevIndex = selectedPieceIndex;
+            document.getElementById(`piece-${prevIndex}`).classList.remove('selected');
+            
+            const temp = puzzleOrder[prevIndex];
+            puzzleOrder[prevIndex] = puzzleOrder[index];
+            puzzleOrder[index] = temp;
+            
+            updatePieceDisplay(prevIndex);
+            updatePieceDisplay(index);
+            
+            selectedPieceIndex = null;
+            checkPuzzleComplete();
+        }
+    };
+
+    function checkPuzzleComplete() {
+        const isMatched = puzzleOrder.every((val, idx) => val === correctOrder[idx]);
+        if (isMatched) {
+            document.getElementById('puzzleSuccessMsg').style.opacity = 1;
+            document.getElementById('puzzleNextBtn').style.display = 'inline-block';
+            
+            // Disable further clicks
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`piece-${i}`).style.pointerEvents = 'none';
+                document.getElementById(`piece-${i}`).style.border = 'none';
+            }
+        }
+    }
+
+    window.goToRealBlowStage = () => {
+        document.getElementById('stage-puzzle').style.display = 'none';
         document.getElementById('stage-blow').style.display = 'flex';
     };
 
