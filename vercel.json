@@ -1,0 +1,23 @@
+{
+  "rewrites": [
+    {
+      "source": "/demo/:path*",
+      "destination": "/demo/:path*"
+    },
+    {
+      "source": "/demo-box/:path*",
+      "destination": "/demo-box/:path*"
+    },
+    {
+      "source": "/demo-timeline/:path*",
+      "destination": "/demo-timeline/:path*"
+    },
+    {
+      "source": "/demo-stars/:path*",
+      "destination": "/demo-stars/:path*"
+    },
+    {
+      "source": "/((?!assets|favicon.ico).*)"
+    }
+  ]
+}

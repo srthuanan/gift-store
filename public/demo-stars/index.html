@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starry Constellations</title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #0b0c10; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; color: white; font-family: 'Helvetica', sans-serif; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        .ui-layer { position: relative; z-index: 10; text-align: center; pointer-events: none; }
+        h1 { font-size: 2.5rem; letter-spacing: 2px; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255,255,255,0.5); opacity: 0; animation: fadeIn 2s forwards 1s; }
+        p { font-size: 1.2rem; color: #c5c6c7; opacity: 0; animation: fadeIn 2s forwards 2.5s; }
+        .message-final { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 4rem; font-weight: bold; color: #fff; text-shadow: 0 0 30px #45a29e, 0 0 50px #66fcf1; opacity: 0; transition: opacity 3s; z-index: 20; text-align: center; white-space: nowrap; pointer-events: none; }
+        .message-final.show { opacity: 1; }
+        
+        @keyframes fadeIn { to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="ui-layer">
+        <h1>Vẽ Lên Bầu Trời</h1>
+        <p>Kéo thả chuột để nối các vì sao lại với nhau...</p>
+    </div>
+
+    <div class="message-final" id="finalMsg">WILL YOU MARRY ME?</div>
+
+    <canvas id="starsCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('starsCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const stars = [];
+        const numStars = 50;
+        let isDrawing = false;
+        let lastStar = null;
+        let connections = 0;
+
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 1,
+                connected: false
+            });
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw connections
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(102, 252, 241, 0.5)';
+            ctx.lineWidth = 1;
+            stars.forEach(s => {
+                if(s.connectedTo) {
+                    ctx.moveTo(s.x, s.y);
+                    ctx.lineTo(s.connectedTo.x, s.connectedTo.y);
+                }
+            });
+            ctx.stroke();
+
+            // Draw stars
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = star.connected ? '#66fcf1' : '#ffffff';
+                ctx.shadowBlur = star.connected ? 15 : 5;
+                ctx.shadowColor = '#66fcf1';
+                ctx.fill();
+            });
+        }
+
+        function getClosestStar(x, y) {
+            let closest = null;
+            let minDist = 30;
+            stars.forEach(star => {
+                const dist = Math.hypot(star.x - x, star.y - y);
+                if (dist < minDist) {
+                    minDist = dist;
+                    closest = star;
+                }
+            });
+            return closest;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const star = getClosestStar(e.clientX, e.clientY);
+            if (star) {
+                isDrawing = true;
+                lastStar = star;
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing || !lastStar) return;
+            const star = getClosestStar(e.clientX, e.clientY);
+            if (star && star !== lastStar && !star.connectedTo) {
+                lastStar.connectedTo = star;
+                star.connected = true;
+                lastStar.connected = true;
+                lastStar = star;
+                connections++;
+                drawStars();
+                
+                if (connections > 20) {
+                    document.getElementById('finalMsg').classList.add('show');
+                    document.querySelector('.ui-layer').style.opacity = 0;
+                }
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => { isDrawing = false; lastStar = null; });
+        
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            const star = getClosestStar(touch.clientX, touch.clientY);
+            if (star) { isDrawing = true; lastStar = star; }
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isDrawing || !lastStar) return;
+            const touch = e.touches[0];
+            const star = getClosestStar(touch.clientX, touch.clientY);
+            if (star && star !== lastStar && !star.connectedTo) {
+                lastStar.connectedTo = star;
+                star.connected = true;
+                lastStar.connected = true;
+                lastStar = star;
+                connections++;
+                drawStars();
+                
+                if (connections > 20) {
+                    document.getElementById('finalMsg').classList.add('show');
+                    document.querySelector('.ui-layer').style.opacity = 0;
+                }
+            }
+        });
+        canvas.addEventListener('touchend', () => { isDrawing = false; lastStar = null; });
+
+        drawStars();
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawStars();
+        });
+    </script>
+</body>
+</html>

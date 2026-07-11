@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hũ Kỷ Niệm Đom Đóm - Love Firefly Match</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: radial-gradient(circle at 50% 50%, #0d0d1e 0%, #030308 100%); color: #c5a880; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; -ms-overflow-style: none; scrollbar-width: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+        
+        /* Starry sky background particles */
+        .star { position: absolute; background: #fff; border-radius: 50%; pointer-events: none; opacity: 0.3; animation: twinkle 3s infinite alternate; }
+        @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.8; } }
+
+        /* UI instruction layers */
+        .instruction-panel { text-align: center; margin-bottom: 20px; z-index: 10; pointer-events: none; transition: opacity 0.8s ease; }
+        h1 { font-family: 'Cinzel Decorative', serif; font-size: 2.2rem; color: #fff; text-shadow: 0 0 20px rgba(253, 224, 71, 0.2); margin: 0; letter-spacing: 2px; }
+        .desc { font-size: 0.95rem; color: #a1a1a6; font-weight: 300; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Jar Stage Area */
+        .stage-area { width: 320px; height: 420px; position: relative; z-index: 5; overflow: hidden; border-radius: 20px; }
+        
+        /* Glassmorphic CSS Glass Jar */
+        .jar-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 230px; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        
+        /* Wooden Cork Lid */
+        .jar-lid { width: 62px; height: 20px; background: linear-gradient(90deg, #5c3a21 0%, #8b5a2b 50%, #5c3a21 100%); border-radius: 5px 5px 3px 3px; box-shadow: 0 4px 8px rgba(0,0,0,0.6), inset 0 2px 2px rgba(255,255,255,0.2); border-bottom: 2px solid #3d2310; z-index: 5; transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); transform-origin: center bottom; }
+        
+        /* Jar Mouth rim */
+        .jar-mouth { width: 68px; height: 12px; border: 2.5px solid rgba(255, 255, 255, 0.35); border-radius: 8px; background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.05)); box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-top: -2px; z-index: 4; }
+        
+        /* Jar Neck */
+        .jar-neck { width: 56px; height: 10px; border-left: 2.5px solid rgba(255, 255, 255, 0.35); border-right: 2.5px solid rgba(255, 255, 255, 0.35); background: rgba(255, 255, 255, 0.03); z-index: 3; position: relative; }
+        
+        /* String & Tag around the neck */
+        .jar-string { position: absolute; top: 2px; left: -2px; width: 60px; height: 3px; background: #8b5a2b; border-radius: 1px; }
+        .jar-tag { position: absolute; top: 4px; right: -16px; width: 38px; height: 24px; background: #dfc397; border-radius: 2px; transform: rotate(18deg); border: 1px solid #8b5a2b; display: flex; justify-content: center; align-items: center; font-family: 'Great Vibes', cursive; color: #3d2310; font-size: 0.95rem; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index: 4; }
+        
+        /* Glass Jar Body */
+        .jar-body { width: 114px; height: 156px; border: 3px solid rgba(255, 255, 255, 0.4); border-radius: 15px 15px 22px 22px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%); box-shadow: inset 0 0 18px rgba(255,255,255,0.15), inset -8px 0 12px rgba(255,255,255,0.05), 0 12px 30px rgba(0,0,0,0.5), 0 0 20px rgba(253, 224, 71, 0.05); position: relative; z-index: 2; }
+        
+        /* Glass highlights */
+        .jar-body::before { content: ''; position: absolute; top: 12px; left: 8px; width: 5px; height: 130px; background: rgba(255, 255, 255, 0.25); border-radius: 3px; filter: blur(0.5px); }
+        .jar-body::after { content: ''; position: absolute; top: 12px; right: 8px; width: 2.5px; height: 130px; background: rgba(255, 255, 255, 0.15); border-radius: 1.5px; }
+
+        /* Opened Jar State */
+        .jar-wrapper.open .jar-lid { transform: translateY(-70px) rotate(-35deg) scale(0.9); opacity: 0; pointer-events: none; }
+        .jar-wrapper.open { transform: translate(-50%, -35%) scale(0.85); opacity: 0.3; }
+        .jar-wrapper.hide-final { opacity: 0 !important; pointer-events: none !important; transform: translate(-50%, -50%) scale(0) !important; }
+
+        /* Tactile Swipe-to-cut lock string */
+        .jar-lock-string { position: absolute; top: 104px; left: 110px; width: 100px; height: 30px; z-index: 10; cursor: ew-resize; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+        .red-rope-l, .red-rope-r { position: absolute; height: 3px; background: #dc2626; box-shadow: 0 0 8px #ef4444; width: 50px; transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .red-rope-l { left: 0; transform-origin: left center; }
+        .red-rope-r { right: 0; transform-origin: right center; }
+        .rope-seal { position: absolute; width: 22px; height: 22px; background: radial-gradient(circle, #fcd34d 20%, #d97706 80%); border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; font-size: 10px; color: #78350f; transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); z-index: 2; }
+        .rope-seal::after { content: '❤'; }
+
+        /* Cut String State */
+        .jar-lock-string.cut .red-rope-l { transform: rotate(-45deg) translateX(-30px); opacity: 0; }
+        .jar-lock-string.cut .red-rope-r { transform: rotate(45deg) translateX(30px); opacity: 0; }
+        .jar-lock-string.cut .rope-seal { transform: scale(1.5) rotate(180deg); opacity: 0; }
+
+        /* Realistic Firefly orbs using AI asset with grab cursor */
+        .firefly { position: absolute; width: 34px; height: 34px; background-image: url('images/firefly_transparent.png?v=1.2'); background-size: contain; background-repeat: no-repeat; cursor: pointer; z-index: 15; opacity: 0.95; will-change: transform; transition: opacity 0.5s ease, filter 0.5s ease; }
+        .firefly.in-jar { opacity: 0.7; filter: brightness(0.6) !important; }
+        .firefly.jar-open { opacity: 0.95; }
+
+        /* Spark particles when popped */
+        .f-particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; animation: explode 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; z-index: 100; }
+        @keyframes explode { to { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+
+        /* 3D Polaroid Memory Card Overlay */
+        .polaroid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 8, 0.85); backdrop-filter: blur(8px); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+        .polaroid-overlay.show { opacity: 1; pointer-events: all; }
+        
+        .polaroid-card { width: 250px; height: 340px; -webkit-perspective: 1000px; perspective: 1000px; background: transparent; }
+        .polaroid-card-inner { width: 100%; height: 100%; position: relative; -webkit-transform-style: preserve-3d; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .polaroid-card-inner.flipped { transform: rotateY(180deg); -webkit-transform: rotateY(180deg); }
+        
+        .polaroid-front, .polaroid-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 4px; box-sizing: border-box; background: #fff; padding: 12px; border: 1px solid #ddd; box-shadow: 0 15px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+        
+        /* Fix click-through issues on 3D flipped state */
+        .polaroid-card-inner:not(.flipped) .polaroid-front { z-index: 2; pointer-events: auto; }
+        .polaroid-card-inner:not(.flipped) .polaroid-back { z-index: 1; pointer-events: none; }
+        .polaroid-card-inner.flipped .polaroid-front { z-index: 1; pointer-events: none; }
+        .polaroid-card-inner.flipped .polaroid-back { z-index: 2; pointer-events: auto; }
+
+        .p-img { width: 100%; height: 200px; object-fit: cover; border-radius: 2px; }
+        .p-caption { font-size: 0.75rem; color: #888; letter-spacing: 0.5px; font-style: italic; margin-top: 5px; }
+        
+        .polaroid-back { transform: rotateY(180deg); -webkit-transform: rotateY(180deg); background: #fffcf5 url('data:image/svg+xml;utf8,<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="39" x2="40" y2="39" stroke="%23ebd5b3" stroke-width="1"/></svg>'); padding: 25px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .p-handwritten-letter { font-family: 'Great Vibes', cursive; font-size: 1.7rem; color: #3d2310; line-height: 1.35; text-align: center; }
+        
+        .p-close-btn { margin-top: 15px; background: #5c0612; color: #dfc397; border: 1px solid #dfc397; border-radius: 4px; padding: 6px 16px; font-size: 0.8rem; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; font-family: 'Montserrat', sans-serif; transition: all 0.3s; z-index: 10; }
+        .p-close-btn:hover { background: #dfc397; color: #5c0612; }
+
+        /* Neon heart center */
+        .neon-heart { position: absolute; top: 210px; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 70px; color: #f43f5e; text-shadow: 0 0 15px #f43f5e, 0 0 35px #ec4899, 0 0 65px #e11d48; cursor: pointer; opacity: 0; z-index: 20; transition: all 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; width: 100px; height: 100px; }
+        .neon-heart.show { transform: translate(-50%, -50%) scale(1); opacity: 1; animation: pulseHeart 1.5s infinite alternate; }
+        @keyframes pulseHeart { from { transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 15px #f43f5e, 0 0 30px #ec4899; } to { transform: translate(-50%, -50%) scale(1.15); text-shadow: 0 0 25px #f43f5e, 0 0 50px #ec4899, 0 0 70px #e11d48; } }
+
+        /* Final letter overlay */
+        .final-letter-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 8, 0.9); backdrop-filter: blur(10px); z-index: 150; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
+        .final-letter-overlay.show { opacity: 1; pointer-events: all; }
+        
+        .final-card { width: 285px; background: #5c0612; padding: 30px 22px; border: 2px solid #dfc397; outline: 6px solid #5c0612; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 8px; text-align: center; transform: translateY(40px); transition: transform 0.8s ease; position: relative; }
+        .final-letter-overlay.show .final-card { transform: translateY(0); }
+        .final-title { font-family: 'Cinzel Decorative', serif; font-size: 1.35rem; color: #dfc397; margin-bottom: 15px; letter-spacing: 1px; }
+        .final-text { font-family: 'Great Vibes', cursive; font-size: 1.7rem; color: #fffcf5; line-height: 1.35; margin-bottom: 15px; }
+
+        /* Neon Love Counter */
+        .love-counter { font-size: 2.6rem; font-weight: bold; color: #fef08a; text-shadow: 0 0 10px #facc15, 0 0 20px #eab308; font-family: monospace; letter-spacing: 1px; margin-top: 15px; }
+        .love-counter-label { font-size: 0.75rem; color: #dfc397; letter-spacing: 2px; margin-top: 2px; text-transform: uppercase; }
+
+        /* Confetti heart particles */
+        .confetti-heart { position: absolute; z-index: 200; pointer-events: none; font-size: 20px; animation: fallConfetti linear forwards; }
+        @keyframes fallConfetti { 0% { transform: translateY(-50px) rotate(0deg) scale(0); opacity: 1; } 100% { transform: translateY(105vh) rotate(360deg) scale(1.2); opacity: 0; } }
+
+        /* Mini Classic Vinyl Player Redesign to Premium Gloss Disc */
+        .music-player-mini { position: fixed; bottom: 20px; right: 20px; width: 48px; height: 48px; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 50%; z-index: 100; cursor: pointer; box-shadow: 0 0 15px rgba(244, 63, 94, 0.3); display: flex; justify-content: center; align-items: center; transition: all 0.3s ease; }
+        .music-player-mini::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px dashed rgba(255, 255, 255, 0.15); animation: spinVinyl 12s linear infinite; animation-play-state: paused; }
+        .music-player-mini.playing::before { animation-play-state: running; }
+        
+        .vinyl-record { width: 34px; height: 34px; background: radial-gradient(circle, #333 20%, #111 21%, #111 40%, #050505 41%, #000 100%); border-radius: 50%; position: relative; animation: spinVinyl 4s linear infinite; animation-play-state: paused; border: 1px solid rgba(255,255,255,0.05); }
+        .vinyl-record::after { content: '🎵'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; animation: pulseMusic 1.5s ease-in-out infinite alternate; animation-play-state: paused; }
+        .music-player-mini.playing .vinyl-record { animation-play-state: running; }
+        .music-player-mini.playing .vinyl-record::after { animation-play-state: running; }
+        
+        @keyframes spinVinyl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pulseMusic { from { transform: scale(0.9); opacity: 0.7; } to { transform: scale(1.1); opacity: 1; } }
+        
+        /* Audio Waves */
+        .audio-wave { display: flex; align-items: flex-end; gap: 2px; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); height: 10px; opacity: 0; transition: opacity 0.3s; }
+        .music-player-mini.playing .audio-wave { opacity: 1; }
+        .wave-bar { width: 2px; background: #f43f5e; border-radius: 1px; animation: bounceWave 0.8s ease-in-out infinite alternate; }
+        .wave-bar:nth-child(2) { animation-delay: 0.15s; height: 100%; }
+        .wave-bar:nth-child(3) { animation-delay: 0.3s; height: 70%; }
+        .wave-bar:nth-child(4) { animation-delay: 0.45s; height: 40%; }
+        @keyframes bounceWave { from { height: 2px; } to { height: 10px; } }
+        
+        .music-note-icon { display: none; }
+
+    </style>
+</head>
+<body>
+
+    <div class="instruction-panel" id="instructPanel">
+        <h1 id="titleText">Hũ Kỷ Niệm</h1>
+        <p id="descText">Hãy vuốt ngang sợi chỉ đỏ để mở khóa hũ...</p>
+    </div>
+
+    <div class="stage-area" id="stageArea">
+        <!-- Glassmorphic CSS Jar aligned absolutely with click fallback -->
+        <div class="jar-wrapper" id="glassJar" onclick="triggerCut()">
+            <div class="jar-lid" id="jarLid"></div>
+            <div class="jar-mouth"></div>
+            <div class="jar-neck">
+                <div class="jar-string"></div>
+                <div class="jar-tag">Love</div>
+            </div>
+            <div class="jar-body"></div>
+        </div>
+        
+        <!-- Tactile red rope overlay for swiping with click/tap fallback -->
+        <div class="jar-lock-string" id="lockString" onclick="triggerCut()" onmousedown="startSwipe(event)" ontouchstart="startSwipe(event)">
+            <div class="red-rope-l"></div>
+            <div class="red-rope-r"></div>
+            <div class="rope-seal"></div>
+        </div>
+        
+        <!-- Big Neon Heart that merges them -->
+        <div class="neon-heart" id="neonHeart" onclick="showFinalLetter()">❤️</div>
+    </div>
+
+    <!-- Polaroid Card Modal Overlay (Flippable) -->
+    <div class="polaroid-overlay" id="polaroidOverlay" onclick="closeMemory()">
+        <div class="polaroid-card">
+            <div class="polaroid-card-inner" id="polaroidInner" onclick="event.stopPropagation(); flipCard()">
+                <!-- Front Side -->
+                <div class="polaroid-front">
+                    <img src="" class="p-img" id="polaroidImg" alt="Memory Photo">
+                    <div class="p-caption">(Chạm để lật mặt sau đọc tâm sự)</div>
+                </div>
+                <!-- Back Side -->
+                <div class="polaroid-back">
+                    <div class="p-handwritten-letter" id="polaroidText"></div>
+                    <button class="p-close-btn" onclick="event.stopPropagation(); closeMemory()">Ghi nhớ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Love Letter Overlay with Counter -->
+    <div class="final-letter-overlay" id="finalOverlay">
+        <div class="final-card">
+            <div class="final-title">Trọn Vẹn Yêu Thương</div>
+            <div class="final-text">
+                "Mỗi chú đom đóm là một khoảnh khắc vô giá anh luôn khắc ghi trong tim. Cảm ơn em vì đã đến và thắp sáng cuộc đời anh."
+            </div>
+            <!-- Neon Day Counter -->
+            <div class="love-counter" id="loveCounter">0</div>
+            <div class="love-counter-label">Ngày bên nhau</div>
+            <br>
+            <button class="p-close-btn" onclick="closeFinalLetter()">Khép lại</button>
+            <button class="p-close-btn" style="margin-left: 10px; background: #c5a880; color: #5c0612;" onclick="resetGame()">Chơi lại</button>
+        </div>
+    </div>
+
+    <!-- Mini Vintage Vinyl Record Player -->
+    <div class="music-player-mini" id="miniPlayer" onclick="toggleAudio()">
+        <div class="audio-wave">
+            <div class="wave-bar"></div>
+            <div class="wave-bar" style="animation-duration: 0.6s"></div>
+            <div class="wave-bar" style="animation-duration: 0.9s"></div>
+            <div class="wave-bar" style="animation-duration: 0.5s"></div>
+        </div>
+        <div class="vinyl-record" id="vinylRecord"></div>
+    </div>
+    <audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-extra-long-1144.mp3"></audio>
+
+    <script>
+        // Starry Night Setup
+        function createStars() {
+            for(let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(star);
+            }
+        }
+        createStars();
+
+        // Stardust Rain Effect (Glow Gold Particles)
+        function createStardust() {
+            setInterval(() => {
+                if (stage < 2) return; // Only rain dust after jar opens
+                const dust = document.createElement('div');
+                const size = Math.random() * 3 + 2;
+                dust.style.width = size + 'px';
+                dust.style.height = size + 'px';
+                dust.style.background = `rgba(253, 224, 71, ${Math.random() * 0.5 + 0.5})`;
+                dust.style.boxShadow = `0 0 ${size * 2}px #facc15`;
+                dust.style.borderRadius = '50%';
+                dust.style.position = 'fixed';
+                dust.style.left = Math.random() * 100 + 'vw';
+                dust.style.top = '-10px';
+                dust.style.zIndex = '1';
+                dust.style.pointerEvents = 'none';
+                
+                const speed = Math.random() * 1.5 + 0.8;
+                const sway = Math.random() * 2 - 1;
+                let topPos = -10;
+                let leftPos = parseFloat(dust.style.left);
+                
+                function fall() {
+                    topPos += speed;
+                    leftPos += Math.sin(topPos / 40) * sway * 0.4;
+                    dust.style.top = topPos + 'px';
+                    dust.style.left = leftPos + 'vw';
+                    
+                    if (topPos < window.innerHeight) {
+                        requestAnimationFrame(fall);
+                    } else {
+                        dust.remove();
+                    }
+                }
+                document.body.appendChild(dust);
+                requestAnimationFrame(fall);
+            }, 350);
+        }
+
+        // Memory database
+        const memories = [
+            {
+                img: "/demo-timeline/images/photo_1.png",
+                text: "Lần đầu mình gặp gỡ...\nÁnh mắt em làm tim anh lỡ nhịp."
+            },
+            {
+                img: "/demo-timeline/images/photo_2.png",
+                text: "Chuyến du lịch đầu tiên...\nNơi tiếng cười em hòa vào tiếng sóng."
+            },
+            {
+                img: "/demo-timeline/images/photo_3.png",
+                text: "Những chiều bình yên bên em...\nThời gian như dừng lại trong hạnh phúc."
+            },
+            {
+                img: "/demo-timeline/images/photo_4.png",
+                text: "Hành trình trọn đời bên nhau...\nAnh sẽ cùng em đi qua mọi giông bão."
+            }
+        ];
+
+        // Check for local preview or generated gift link
+        const urlParams = new URLSearchParams(window.location.search);
+        const isPreview = urlParams.get('preview') === 'true';
+        const giftId = urlParams.get('id');
+        
+        let targetDays = 1258; // Hardcoded love days count
+        let finalWishText = "Mỗi chú đom đóm là một khoảnh khắc vô giá anh luôn khắc ghi trong tim. Cảm ơn em vì đã đến và thắp sáng cuộc đời anh. Yêu em mãi mãi! ❤️";
+        
+        if (isPreview || giftId) {
+            const dataKey = isPreview ? 'local_gift_preview' : `gift_data_${giftId}`;
+            const previewData = localStorage.getItem(dataKey);
+            if (previewData) {
+                try {
+                    const data = JSON.parse(previewData);
+                    if (data.anniversaryDate) {
+                        targetDays = parseInt(data.anniversaryDate) || 1258;
+                    }
+                    if (data.images && data.images.length > 0) {
+                        for(let i = 0; i < 4; i++) {
+                            if(data.images[i]) memories[i].img = data.images[i];
+                        }
+                    }
+                    if (data.wishes && data.wishes.length > 0) {
+                        for(let i = 0; i < 4; i++) {
+                            if(data.wishes[i]) memories[i].text = data.wishes[i];
+                        }
+                    }
+                    if (data.wishes && data.wishes[4]) {
+                        finalWishText = data.wishes[4];
+                    }
+                } catch(e) {
+                    console.error("Preview data parse error", e);
+                }
+            }
+        }
+
+        // Show preview banner if in preview mode
+        if (isPreview) {
+            const banner = document.createElement('div');
+            banner.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+                background: linear-gradient(90deg, #ff3366, #ff9933);
+                color: #fff; text-align: center; font-size: 0.72rem;
+                font-weight: 700; letter-spacing: 1.5px; padding: 5px;
+                font-family: 'Montserrat', sans-serif; text-transform: uppercase;
+            `;
+            banner.innerText = '✦ CHẾ ĐỘ XEM THỬ – KHÔNG PHẢI BẢN THẬT ✦';
+            document.body.appendChild(banner);
+        }
+
+        let stage = 1; // 1: closed/locked, 2: open/flying, 3: matching, 4: heart, 5: final
+        let openedCount = 0;
+        const openedMemories = [false, false, false, false];
+
+        const jar = document.getElementById('glassJar');
+        const titleText = document.getElementById('titleText');
+        const descText = document.getElementById('descText');
+        const stageArea = document.getElementById('stageArea');
+        
+        // Audio Player controls
+        const audio = document.getElementById('bgMusic');
+        const miniPlayer = document.getElementById('miniPlayer');
+        let isPlaying = false;
+        
+        function toggleAudio() {
+            if(isPlaying) {
+                audio.pause();
+                miniPlayer.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                audio.play().catch(e => console.log("Audio play blocked by browser policy"));
+                miniPlayer.classList.add('playing');
+                isPlaying = true;
+            }
+        }
+        
+        // Define firefly colors
+        const colors = [
+            { name: 'red', hex: '#f43f5e', filter: 'hue-rotate(-45deg) drop-shadow(0 0 10px #f43f5e) brightness(1.3)' },
+            { name: 'blue', hex: '#3b82f6', filter: 'hue-rotate(160deg) drop-shadow(0 0 10px #3b82f6) brightness(1.3)' },
+            { name: 'gold', hex: '#eab308', filter: 'drop-shadow(0 0 10px #eab308) brightness(1.3)' },
+            { name: 'pink', hex: '#ec4899', filter: 'hue-rotate(280deg) drop-shadow(0 0 10px #ec4899) brightness(1.3)' }
+        ];
+
+        // 8 fireflies: 2 of each color
+        const fireflyColors = [
+            colors[0], colors[0],
+            colors[1], colors[1],
+            colors[2], colors[2],
+            colors[3], colors[3]
+        ];
+
+        // Dynamically spawn 8 fireflies
+        const fireflies = [];
+        const numFireflies = 8;
+        
+        function spawnFireflies() {
+            for (let i = 0; i < numFireflies; i++) {
+                const ff = document.createElement('div');
+                ff.className = 'firefly';
+                ff.id = 'ff' + i;
+                
+                const color = fireflyColors[i];
+                ff.style.filter = color.filter;
+                
+                // Select & Match tap listeners
+                const handleSelect = (e) => {
+                    e.stopPropagation();
+                    selectFirefly(fireflies[i]);
+                };
+                ff.addEventListener('click', handleSelect);
+                ff.addEventListener('touchend', handleSelect);
+                
+                stageArea.appendChild(ff);
+                
+                // Random start position inside the jar body
+                const startX = Math.random() * (185 - 135) + 135;
+                const startY = Math.random() * (260 - 180) + 180;
+                
+                fireflies.push({
+                    id: i,
+                    x: startX,
+                    y: startY,
+                    tx: startX,
+                    ty: startY,
+                    speed: Math.random() * 0.8 + 0.5,
+                    element: ff,
+                    color: color,
+                    escaping: false,
+                    escaping_up: false,
+                    released: false,
+                    merged: false,
+                    selected: false
+                });
+            }
+        }
+        spawnFireflies();
+
+        // Select & Match Logic (tap once to select, tap again to match)
+        let selectedFirefly = null;
+
+        function clearSelection() {
+            if (selectedFirefly) {
+                selectedFirefly.selected = false;
+                selectedFirefly.element.style.outline = 'none';
+                selectedFirefly.element.style.boxShadow = '';
+                selectedFirefly.element.style.animation = selectedFirefly.element.style.animation.replace(', selectedPulse 0.6s ease-in-out infinite alternate', '');
+                selectedFirefly = null;
+            }
+        }
+
+        function selectFirefly(f) {
+            if (stage !== 2 || f.merged) return;
+            
+            // Tapping the same firefly again = deselect
+            if (selectedFirefly && selectedFirefly.id === f.id) {
+                clearSelection();
+                return;
+            }
+            
+            // Second tap: attempt match
+            if (selectedFirefly) {
+                const f1 = selectedFirefly;
+                clearSelection();
+                
+                if (f1.color.name === f.color.name) {
+                    // Correct match!
+                    mergePair(f1, f);
+                } else {
+                    // Wrong match: brief shake both and bounce apart
+                    [f1, f].forEach(ff => {
+                        ff.element.style.transition = 'transform 0.1s';
+                        ff.element.style.transform = ff.element.style.transform + ' scale(1.3)';
+                        setTimeout(() => { ff.element.style.transform = ''; }, 150);
+                    });
+                    const dx = f.x - f1.x || 50;
+                    const dy = f.y - f1.y || 50;
+                    const angle = Math.atan2(dy, dx);
+                    const force = 90;
+                    f1.tx = Math.max(30, Math.min(290, f1.x - Math.cos(angle) * force));
+                    f1.ty = Math.max(40, Math.min(380, f1.y - Math.sin(angle) * force));
+                    f1.speed = 1.5;
+                    f.tx = Math.max(30, Math.min(290, f.x + Math.cos(angle) * force));
+                    f.ty = Math.max(40, Math.min(380, f.y + Math.sin(angle) * force));
+                    f.speed = 1.5;
+                }
+                return;
+            }
+            
+            // First tap: select this firefly
+            selectedFirefly = f;
+            f.selected = true;
+            // Highlight with gold ring pulse
+            f.element.style.outline = '3px solid #fde047';
+            f.element.style.borderRadius = '50%';
+            f.element.style.boxShadow = '0 0 18px 6px #fde04788';
+        }
+
+        // Merge matching firefly pair
+        let activeMemoryIndex = -1;
+        const polaroidInner = document.getElementById('polaroidInner');
+
+        function mergePair(f1, f2) {
+            f1.merged = true;
+            f2.merged = true;
+            
+            const midX = (f1.x + f2.x) / 2;
+            const midY = (f1.y + f2.y) / 2;
+            
+            // Glide both to center point
+            f1.element.style.transition = 'all 0.5s ease-out';
+            f2.element.style.transition = 'all 0.5s ease-out';
+            f1.element.style.transform = `translate(${midX - 17}px, ${midY - 17}px) scale(0)`;
+            f2.element.style.transform = `translate(${midX - 17}px, ${midY - 17}px) scale(0)`;
+            f1.element.style.opacity = '0';
+            f2.element.style.opacity = '0';
+            
+            // Explode particles of their color
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'f-particle';
+                p.style.backgroundColor = f1.color.hex;
+                p.style.left = midX + 'px';
+                p.style.top = midY + 'px';
+                p.style.width = Math.random() * 5 + 3 + 'px';
+                p.style.height = p.style.width;
+                p.style.boxShadow = `0 0 8px ${f1.color.hex}`;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 70 + 20;
+                p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 800);
+            }
+            
+            // Determine memory index based on color
+            let memIdx = 0;
+            if (f1.color.name === 'red') memIdx = 0;
+            if (f1.color.name === 'blue') memIdx = 1;
+            if (f1.color.name === 'gold') memIdx = 2;
+            if (f1.color.name === 'pink') memIdx = 3;
+            
+            activeMemoryIndex = memIdx;
+            
+            setTimeout(() => {
+                f1.element.remove();
+                f2.element.remove();
+                
+                // Open Polaroid card modal
+                polaroidInner.classList.remove('flipped');
+                document.getElementById('polaroidImg').src = memories[memIdx].img;
+                document.getElementById('polaroidText').innerText = memories[memIdx].text;
+                document.getElementById('polaroidOverlay').classList.add('show');
+            }, 500);
+        }
+
+        // Firefly Animation Loop (Glide smoothly and float randomly)
+        function animFireflies() {
+            fireflies.forEach(f => {
+                if (f.merged) return;
+                
+                const dx = f.tx - f.x;
+                const dy = f.ty - f.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                // If heading to mouth to escape
+                if (f.escaping && !f.escaping_up && !f.released) {
+                    if (dist < 12) {
+                        f.escaping_up = true;
+                        f.tx = Math.random() * (220 - 100) + 100;
+                        f.ty = Math.random() * (90 - 50) + 50; 
+                        f.speed = 1.0;
+                    }
+                } 
+                // If rising up above the jar
+                else if (f.escaping_up && !f.released) {
+                    if (dist < 12) {
+                        f.released = true;
+                        f.tx = Math.random() * (290 - 30) + 30;
+                        f.ty = Math.random() * (380 - 40) + 40;
+                        f.speed = Math.random() * 0.3 + 0.15; 
+                    }
+                }
+                // Normal floating pathing
+                else if (dist < 10) {
+                    if (!f.released) {
+                        f.tx = Math.random() * (185 - 135) + 135;
+                        f.ty = Math.random() * (260 - 180) + 180;
+                    } else {
+                        f.tx = Math.random() * (290 - 30) + 30;
+                        f.ty = Math.random() * (380 - 40) + 40;
+                        f.speed = Math.random() * 0.3 + 0.15; 
+                    }
+                }
+                
+                const lerpFactor = f.escaping && !f.released ? 0.04 : 0.02;
+                f.x += dx * lerpFactor * f.speed;
+                f.y += dy * lerpFactor * f.speed;
+                
+                f.element.style.left = '0px';
+                f.element.style.top = '0px';
+                f.element.style.transform = `translate(${f.x - 17}px, ${f.y - 17}px)`;
+                
+                // Update visibility class
+                if (f.released) {
+                    f.element.classList.remove('in-jar');
+                } else {
+                    f.element.classList.add('in-jar');
+                }
+            });
+            requestAnimationFrame(animFireflies);
+        }
+        
+        requestAnimationFrame(animFireflies);
+        
+        // Touch/Swipe-to-cut lock string detection
+        let sX = 0;
+        let isSwiping = false;
+        
+        function startSwipe(e) {
+            if (stage !== 1) return;
+            isSwiping = true;
+            sX = e.touches ? e.touches[0].clientX : e.clientX;
+            
+            if(!e.touches) {
+                window.addEventListener('mousemove', handleSwipe);
+                window.addEventListener('mouseup', stopSwipe);
+            } else {
+                window.addEventListener('touchmove', handleSwipe, {passive: false});
+                window.addEventListener('touchend', stopSwipe);
+            }
+        }
+        
+        function handleSwipe(e) {
+            if (!isSwiping) return;
+            const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+            const deltaX = Math.abs(currentX - sX);
+            
+            if (deltaX > 45) {
+                isSwiping = false;
+                triggerCut();
+            }
+        }
+        
+        function stopSwipe() {
+            isSwiping = false;
+            window.removeEventListener('mousemove', handleSwipe);
+            window.removeEventListener('mouseup', stopSwipe);
+            window.removeEventListener('touchmove', handleSwipe);
+            window.removeEventListener('touchend', stopSwipe);
+        }
+        
+        function triggerCut() {
+            if (stage !== 1) return;
+            stage = 2; // Lock stage immediately to prevent duplicate runs on swipe/click conflicts
+            
+            const lockString = document.getElementById('lockString');
+            if (lockString) lockString.classList.add('cut');
+            
+            // Auto play music
+            audio.play().then(() => {
+                isPlaying = true;
+                miniPlayer.classList.add('playing');
+            }).catch(e => console.log("Autoplay blocked"));
+            
+            setTimeout(() => {
+                const ls = document.getElementById('lockString');
+                if (ls) ls.remove();
+                openJar();
+            }, 500);
+        }
+        
+        // Stage 1 -> Stage 2: Open Jar and release fireflies sequentially
+        function openJar() {
+            jar.classList.add('open');
+            createStardust();
+            
+            // Sparks from mouth
+            const rect = jar.getBoundingClientRect();
+            for(let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'f-particle';
+                p.style.backgroundColor = '#facc15';
+                p.style.left = rect.left + 70 + 'px';
+                p.style.top = rect.top + 20 + 'px';
+                p.style.width = '6px';
+                p.style.height = '6px';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 70 + 20;
+                p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 800);
+            }
+            
+            titleText.style.opacity = 0;
+            descText.style.opacity = 0;
+
+            // Sequential release through jar neck
+            fireflies.forEach((f, idx) => {
+                setTimeout(() => {
+                    f.escaping = true;
+                    f.tx = 160;
+                    f.ty = 125;
+                    f.speed = 1.35;
+                }, idx * 250);
+            });
+
+            setTimeout(() => {
+                titleText.innerText = "Ghép Đôi Đom Đóm";
+                descText.innerText = "Chạm chọn 1 con rồi chạm con cùng màu để ghép đôi! 🌟";
+                titleText.style.opacity = 1;
+                descText.style.opacity = 1;
+            }, 800);
+        }
+
+        // Card Flip 3D
+        function flipCard() {
+            document.getElementById('polaroidInner').classList.toggle('flipped');
+        }
+
+        // Close Polaroid card modal
+        function closeMemory() {
+            document.getElementById('polaroidOverlay').classList.remove('show');
+            
+            // Reset to front side immediately after modal fades out
+            setTimeout(() => {
+                document.getElementById('polaroidInner').classList.remove('flipped');
+            }, 500);
+            
+            if (activeMemoryIndex !== -1 && !openedMemories[activeMemoryIndex]) {
+                openedMemories[activeMemoryIndex] = true;
+                openedCount++;
+                
+                if (openedCount === 4) {
+                    setTimeout(triggerFinalReveal, 1000);
+                }
+            }
+            activeMemoryIndex = -1;
+        }
+
+        // Stage 3 -> Stage 4: Show final heart
+        function triggerFinalReveal() {
+            stage = 3;
+            titleText.style.opacity = 0;
+            descText.style.opacity = 0;
+            
+            setTimeout(() => {
+                stage = 4;
+                titleText.innerText = "Trái Tim Kỷ Niệm";
+                descText.innerText = "Chạm vào trái tim để mở lời chúc...";
+                titleText.style.opacity = 1;
+                descText.style.opacity = 1;
+                
+                // Hide the jar completely for a clean look when heart is shown
+                jar.classList.add('hide-final');
+                
+                document.getElementById('neonHeart').classList.add('show');
+            }, 800);
+        }
+
+        // Show final love letter
+        function showFinalLetter() {
+            if (stage !== 4) return;
+            stage = 5;
+            
+            // Set dynamic final wish text if preview
+            document.querySelector('.final-text').innerText = finalWishText;
+            
+            // Heart spark explosion
+            const rect = document.getElementById('neonHeart').getBoundingClientRect();
+            for(let i = 0; i < 35; i++) {
+                const p = document.createElement('div');
+                p.className = 'f-particle';
+                p.style.backgroundColor = '#ec4899';
+                p.style.width = Math.random() * 6 + 4 + 'px';
+                p.style.height = p.style.width;
+                p.style.left = rect.left + 50 + 'px';
+                p.style.top = rect.top + 50 + 'px';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 160 + 50;
+                p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+                p.style.animationDuration = Math.random() * 0.6 + 0.6 + 's';
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1200);
+            }
+            
+            setTimeout(() => {
+                document.getElementById('finalOverlay').classList.add('show');
+                launchConfetti();
+                startCountUp(); // Start neon day counter
+            }, 400);
+        }
+
+        // Count-up for Neon Love Counter
+        function startCountUp() {
+            const targetDaysNum = targetDays; // Use dynamic global love days count
+            const counterEl = document.getElementById('loveCounter');
+            let current = 0;
+            const duration = 2200; 
+            const startTime = performance.now();
+            
+            function update(timestamp) {
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = progress * (2 - progress);
+                current = Math.floor(easeProgress * targetDaysNum);
+                counterEl.innerText = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    counterEl.innerText = targetDays;
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        // Confetti Heart shower
+        function launchConfetti() {
+            const heartColors = ['#f43f5e', '#ec4899', '#f59e0b', '#fff', '#e11d48'];
+            const hearts = ['❤️', '💖', '✨', '🌸', '💕'];
+            for(let i = 0; i < 45; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'confetti-heart';
+                    heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+                    heart.style.color = heartColors[Math.floor(Math.random() * heartColors.length)];
+                    document.body.appendChild(heart);
+                    setTimeout(() => heart.remove(), 6000);
+                }, i * 120);
+            }
+        }
+
+        // Close final letter modal
+        function closeFinalLetter() {
+            document.getElementById('finalOverlay').classList.remove('show');
+            stage = 4;
+        }
+
+        // Replay/Reset Game State
+        function resetGame() {
+            document.getElementById('finalOverlay').classList.remove('show');
+            
+            // Clear any pending selection
+            clearSelection();
+            
+            stage = 1;
+            openedCount = 0;
+            openedMemories.fill(false);
+            
+            document.getElementById('neonHeart').classList.remove('show');
+            jar.classList.remove('open');
+            jar.classList.remove('hide-final');
+            
+            audio.pause();
+            audio.currentTime = 0;
+            miniPlayer.classList.remove('playing');
+            isPlaying = false;
+            
+            const existingFireflies = document.querySelectorAll('.firefly');
+            existingFireflies.forEach(el => el.remove());
+            fireflies.length = 0;
+            
+            spawnFireflies();
+            
+            // Re-create red string lock overlay
+            const oldLock = document.getElementById('lockString');
+            if (oldLock) oldLock.remove();
+            
+            const newLock = document.createElement('div');
+            newLock.className = 'jar-lock-string';
+            newLock.id = 'lockString';
+            newLock.innerHTML = `
+                <div class="red-rope-l"></div>
+                <div class="red-rope-r"></div>
+                <div class="rope-seal"></div>
+            `;
+            newLock.addEventListener('mousedown', startSwipe);
+            newLock.addEventListener('touchstart', startSwipe);
+            newLock.addEventListener('click', triggerCut);
+            
+            stageArea.insertBefore(newLock, document.getElementById('neonHeart'));
+            
+            titleText.innerText = "Hũ Kỷ Niệm";
+            descText.innerText = "Hãy vuốt ngang sợi chỉ đỏ để mở khóa hũ...";
+            titleText.style.opacity = 1;
+            descText.style.opacity = 1;
+        }
+    </script>
+</body>
+</html>

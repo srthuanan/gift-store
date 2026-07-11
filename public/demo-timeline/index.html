@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Timeline - Premium Luxury</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Montserrat:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; background: #0c0c0e; color: #c5a880; font-family: 'Montserrat', sans-serif; overflow-x: hidden; letter-spacing: 0.5px; -ms-overflow-style: none; scrollbar-width: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+        
+        /* Minimalist Gold Music Player */
+        .music-player { position: fixed; top: 20px; right: 20px; background: rgba(12, 12, 14, 0.7); backdrop-filter: blur(15px); padding: 8px 18px; border-radius: 30px; display: flex; align-items: center; gap: 10px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.6); border: 1px solid rgba(197, 168, 128, 0.3); cursor: pointer; color: #c5a880; font-size: 0.85rem; font-weight: 300; transition: all 0.3s; }
+        .music-player:hover { border-color: #c5a880; transform: translateY(-2px); }
+        .music-icon { width: 24px; height: 24px; border-radius: 50%; background: #c5a880; display: flex; justify-content: center; align-items: center; color: #0c0c0e; font-size: 12px; animation: spin 4s linear infinite; }
+        .music-player.paused .music-icon { animation-play-state: paused; background: #555; color: #fff; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Header */
+        .header { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; }
+        h1 { font-family: 'Cinzel Decorative', serif; font-size: 4rem; color: #fff; text-shadow: 0 0 25px rgba(197, 168, 128, 0.4); margin: 0; letter-spacing: 4px; }
+        .subtitle { font-size: 1.1rem; color: #8a8a8f; margin-top: 15px; font-weight: 300; text-transform: uppercase; letter-spacing: 2px; }
+        .scroll-indicator { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); animation: float 2s infinite ease-in-out; color: #c5a880; font-size: 1.5rem; }
+        @keyframes float { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 15px); } }
+
+        /* SVG Heartbeat Line (Gold Glow) */
+        #svgPath { position: absolute; top: 100vh; left: 50%; transform: translateX(-50%); width: 100px; height: 2000px; z-index: 0; pointer-events: none; }
+        #pathLine { filter: drop-shadow(0 0 6px rgba(197, 168, 128, 0.6)); }
+        
+        /* Timeline */
+        .timeline { position: relative; max-width: 800px; margin: 0 auto; padding: 100px 20px; z-index: 1; }
+        .item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 150px; opacity: 0; transform: translateY(100px) scale(0.95); transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .item.show { opacity: 1; transform: translateY(0) scale(1); }
+        .item:nth-child(even) { flex-direction: row-reverse; }
+        
+        .content { width: 45%; }
+        .year { font-family: 'Cinzel Decorative', serif; font-size: 2.2rem; color: #c5a880; margin-bottom: 15px; letter-spacing: 2px; }
+        .desc { color: #a1a1a6; font-size: 1rem; line-height: 1.8; font-weight: 300; }
+        
+        /* Polaroid 3D Card Flip (Luxury Gold Border) */
+        .polaroid-wrapper { width: 45%; perspective: 1000px; height: 350px; cursor: pointer; transform: rotate(-2deg); transition: transform 0.3s; }
+        .item:nth-child(even) .polaroid-wrapper { transform: rotate(2deg); }
+        .polaroid-wrapper:hover { transform: scale(1.05) rotate(0); z-index: 10; }
+        
+        .polaroid-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
+        .polaroid-wrapper.flipped .polaroid-inner { transform: rotateY(180deg); }
+        
+        .polaroid-front, .polaroid-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); box-sizing: border-box; }
+        
+        .polaroid-front { background: #18181b; padding: 12px 12px 30px 12px; border: 1px solid rgba(197, 168, 128, 0.3); }
+        .polaroid-front img { width: 100%; height: 82%; object-fit: cover; border-radius: 4px; filter: grayscale(15%) contrast(105%); }
+        .caption { text-align: center; font-family: 'Great Vibes', cursive; font-size: 2rem; color: #c5a880; margin-top: 12px; }
+        
+        .polaroid-back { background: #1c1c1f url('data:image/svg+xml;utf8,<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)" opacity="0.05"/></svg>'); transform: rotateY(180deg); padding: 30px 20px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; border: 4px double rgba(197, 168, 128, 0.5); }
+        
+        .back-heart { font-size: 26px; color: #c5a880; animation: beat 1.2s infinite alternate; }
+        @keyframes beat { to { transform: scale(1.15); filter: drop-shadow(0 0 5px #c5a880); } }
+        
+        .back-text { font-family: 'Great Vibes', cursive; font-size: 1.8rem; color: #fffcf2; line-height: 1.5; text-align: center; margin: 0; font-weight: normal; }
+        .back-date { font-family: 'Montserrat', sans-serif; font-size: 0.8rem; color: #888; margin: 0; letter-spacing: 1px; }
+
+        /* Ambient falling elements */
+        .particle { position: fixed; top: -5vh; pointer-events: none; animation: fall linear infinite; z-index: 0; opacity: 0.75; filter: drop-shadow(0 2px 4px rgba(197, 168, 128, 0.3)) brightness(1.1); background-size: contain; background-repeat: no-repeat; }
+        .particle.type-petal { background-image: url('images/petal_transparent.png'); }
+        .particle.type-rose { background-image: url('images/rose_transparent.png'); }
+        @keyframes fall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(105vh) rotate(360deg); } }
+
+        /* Letter Section with Luxury Velvet Burgundy/Gold Style */
+        .letter-section { height: 120vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1a151b 0%, #080709 100%); flex-direction: column; position: relative; z-index: 2; overflow: hidden; }
+        
+        .envelope-wrapper { position: relative; cursor: pointer; transform-style: preserve-3d; transition: transform 0.5s; }
+        .envelope-wrapper:hover { transform: scale(1.05); }
+        
+        /* Dark Burgundy Velvet Envelope */
+        .envelope { width: 320px; height: 220px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.9); border-radius: 5px; background: #6b0d18 url('data:image/svg+xml;utf8,<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)" opacity="0.12"/></svg>'); }
+        
+        .envelope-front { position: absolute; bottom: 0; left: 0; border-left: 160px solid #5c0612; border-right: 160px solid #5c0612; border-bottom: 110px solid #4e030c; border-top: 110px solid transparent; z-index: 3; filter: drop-shadow(0 -3px 5px rgba(0,0,0,0.5)); }
+        
+        .envelope-flap { position: absolute; top: 0; left: 0; border-left: 160px solid transparent; border-right: 160px solid transparent; border-top: 130px solid #6b0d18; z-index: 4; transform-origin: top; transition: transform 0.8s ease-in-out, z-index 0s 0.4s; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.5)); }
+        
+        /* Royal Gold Wax Seal */
+        .wax-seal { position: absolute; top: -10px; left: -30px; width: 60px; height: 60px; background: radial-gradient(circle at 35% 35%, #fcd34d 0%, #d97706 70%, #92400e 100%); border-radius: 50%; z-index: 6; box-shadow: 0 4px 15px rgba(0,0,0,0.7), inset 0 0 10px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 22px; color: #78350f; text-shadow: 0 1px 1px rgba(255,255,255,0.3); transition: all 0.5s ease; animation: pulse 2s infinite; }
+        .wax-seal::after { content: '❤'; }
+        
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(217, 119, 6, 0); } 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); } }
+        
+        .wax-seal.broken { transform: scale(1.5); opacity: 0; animation: none; }
+        
+        /* Elegant Gold-rimmed letter */
+        .letter { position: absolute; bottom: 10px; left: 10px; width: 300px; height: 200px; background: #fffcf5 url('data:image/svg+xml;utf8,<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)" opacity="0.08"/></svg>'); z-index: 2; padding: 20px 30px; box-sizing: border-box; font-family: 'Great Vibes', cursive; color: #2d261e; font-size: 1.8rem; transition: transform 1.5s ease-in-out 0.8s; box-shadow: 0 0 20px rgba(0,0,0,0.3); border: 2px solid #dfc397; outline: 6px solid #fffcf5; }
+        
+        /* The Magic Open */
+        .envelope-wrapper.open .envelope-flap { transform: rotateX(180deg); z-index: 1; transition: transform 0.8s ease-in-out, z-index 0s 0.4s; }
+        .envelope-wrapper.open .letter { transform: translateY(-170px); }
+        
+        .typewriter-text { opacity: 1; white-space: pre-wrap; border-right: 2px solid transparent; }
+        .typewriter-text.typing { animation: blink 0.5s step-end infinite alternate; }
+        @keyframes blink { 50% { border-color: transparent; } 100% { border-color: #333; } }
+
+        /* Rose Petals */
+        .petal { position: fixed; top: -10vh; z-index: 100; pointer-events: none; animation: fall-petal linear forwards; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.6)) brightness(1.1); background-size: contain; background-repeat: no-repeat; }
+        .petal.type-petal { background-image: url('images/petal_transparent.png'); }
+        .petal.type-rose { background-image: url('images/rose_transparent.png'); }
+        @keyframes fall-petal { 0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg) scale(0.7); opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="music-player paused" onclick="toggleMusic()">
+        <div class="music-icon">🎵</div>
+        <span id="musicText">Phát nhạc</span>
+    </div>
+
+    <div class="header">
+        <h1>Dòng Ký Ức</h1>
+        <div class="subtitle">Cuộn xuống để xem lại hành trình...</div>
+        <div class="scroll-indicator">↓</div>
+    </div>
+
+    <!-- SVG Heartbeat EKG line drawn on scroll (Elegant Gold Glow) -->
+    <svg id="svgPath" viewBox="0 0 100 2000" preserveAspectRatio="none">
+        <path id="pathLine" d="M50,0 L50,150 L48,155 L52,160 L50,165 L50,170 L40,172 L65,178 L35,182 L50,185 L50,190 L53,195 L47,198 L50,200 L50,650 L48,655 L52,660 L50,665 L50,670 L40,672 L65,678 L35,682 L50,685 L50,690 L53,695 L47,698 L50,700 L50,1150 L48,1155 L52,1160 L50,1165 L50,1170 L40,1172 L65,1178 L35,1182 L50,1185 L50,1190 L53,1195 L47,1198 L50,1200 L50,1650 L48,1655 L52,1660 L50,1665 L50,1670 L40,1672 L65,1678 L35,1682 L50,1685 L50,1690 L53,1695 L47,1698 L50,1700 L50,2000" fill="none" stroke="rgba(197, 168, 128, 0.4)" stroke-width="4" stroke-dasharray="3000" stroke-dashoffset="3000" />
+    </svg>
+
+    <div class="timeline">
+        <div class="item">
+            <div class="content">
+                <div class="year">Ngày Ấy...</div>
+                <div class="desc">Lần đầu tiên ánh mắt chạm nhau tại góc quán quen. Anh còn nhớ lúc đó em ngại ngùng giấu mặt đi không? Đó là khoảnh khắc trái tim anh biết mình đã tìm được chân ái của cuộc đời.</div>
+            </div>
+            <div class="polaroid-wrapper" onclick="this.classList.toggle('flipped')">
+                <div class="polaroid-inner">
+                    <div class="polaroid-front">
+                        <img src="images/photo_1.png" alt="First Meet">
+                        <div class="caption">First Sight</div>
+                    </div>
+                    <div class="polaroid-back">
+                        <div class="back-heart">❤</div>
+                        <p class="back-text">Hôm đó là một chiều thu lộng gió. Anh đã đứng đợi em suốt 30 phút, nhưng khoảnh khắc nhìn thấy em bước vào quán với chiếc váy trắng, mọi sự chờ đợi đều tan biến...</p>
+                        <p class="back-date">10.10.2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="content">
+                <div class="year">Những Chuyến Đi</div>
+                <div class="desc">Bàn tay nắm chặt tay nhau đi qua bao nẻo đường. Dù là khu rừng vắng hay con hẻm nhỏ, chỉ cần có em bên cạnh, mọi phong cảnh trên thế gian đều trở nên lãng mạn.</div>
+            </div>
+            <div class="polaroid-wrapper" onclick="this.classList.toggle('flipped')">
+                <div class="polaroid-inner">
+                    <div class="polaroid-front">
+                        <img src="images/photo_2.png" alt="Travel">
+                        <div class="caption">Hold my hand</div>
+                    </div>
+                    <div class="polaroid-back">
+                        <div class="back-heart">❤</div>
+                        <p class="back-text">Chuyến đi Đà Lạt đầu tiên của hai đứa. Dưới cơn mưa phùn lạnh giá của rừng thông, cái nắm tay siết chặt của em đã sưởi ấm tâm hồn anh suốt cả chặng đường.</p>
+                        <p class="back-date">24.12.2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="content">
+                <div class="year">Bình Yên</div>
+                <div class="desc">Chẳng cần điều gì quá lớn lao, chỉ một buổi chiều hoàng hôn cùng nhau trò chuyện trên bãi cỏ cũng đủ để thấy cuộc đời này thật trọn vẹn và ý nghĩa.</div>
+            </div>
+            <div class="polaroid-wrapper" onclick="this.classList.toggle('flipped')">
+                <div class="polaroid-inner">
+                    <div class="polaroid-front">
+                        <img src="images/photo_3.png" alt="Picnic">
+                        <div class="caption">Sweet Times</div>
+                    </div>
+                    <div class="polaroid-back">
+                        <div class="back-heart">❤</div>
+                        <p class="back-text">Một buổi picnic tự chuẩn bị thật đơn giản nhưng tràn ngập tiếng cười. Chỉ cần tựa đầu vào vai em ngắm hoàng hôn buông, anh thấy bình yên lạ kỳ.</p>
+                        <p class="back-date">15.04.2025</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="content">
+                <div class="year">Mãi Mãi</div>
+                <div class="desc">Và hôm nay, chúng ta cùng nhìn về một hướng dưới bầu trời đầy sao. Anh mong rằng những ngôi sao kia sẽ là minh chứng cho tình yêu vĩnh cửu của đôi mình.</div>
+            </div>
+            <div class="polaroid-wrapper" onclick="this.classList.toggle('flipped')">
+                <div class="polaroid-inner">
+                    <div class="polaroid-front">
+                        <img src="images/photo_4.png" alt="Night Beach">
+                        <div class="caption">Eternity</div>
+                    </div>
+                    <div class="polaroid-back">
+                        <div class="back-heart">❤</div>
+                        <p class="back-text">Dưới bầu trời đêm đầy sao lấp lánh trên bờ biển, anh muốn nói với em một lời hứa trọn đời: Anh sẽ mãi bên em, che chở cho em suốt hành trình còn lại.</p>
+                        <p class="back-date">10.07.2026</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="letter-section">
+        <h2 id="letterTitle" style="font-family: 'Cinzel Decorative'; font-size: 2.2rem; margin-bottom: 50px; letter-spacing: 3px; transition: opacity 1.5s ease;">Gửi ngàn lời yêu...</h2>
+        
+        <div class="envelope-wrapper" id="envWrapper" onclick="breakSealAndOpen(this)">
+            <div class="envelope">
+                <div class="envelope-flap">
+                    <div class="wax-seal" id="waxSeal"></div>
+                </div>
+                <div class="envelope-front"></div>
+                <div class="letter">
+                    <div class="typewriter-text" id="typeText"></div>
+                </div>
+            </div>
+        </div>
+        <p id="letterHint" style="margin-top: 60px; color: #555; font-style: italic; font-weight: 300; letter-spacing: 1px; transition: opacity 1s ease;">(Chạm vào con dấu sáp vàng để mở thư)</p>
+    </div>
+
+    <script>
+        // Check for local preview
+        const urlParams = new URLSearchParams(window.location.search);
+        const isPreview = urlParams.get('preview') === 'true';
+        
+        let customImages = ["images/photo_1.png", "images/photo_2.png", "images/photo_3.png", "images/photo_4.png"];
+        let customWishes = [
+            "Lần đầu mình gặp gỡ...\nÁnh mắt em làm tim anh lỡ nhịp.",
+            "Chuyến du lịch đầu tiên...\nNơi tiếng cười em hòa vào tiếng sóng.",
+            "Những chiều bình yên bên em...\nThời gian như dừng lại trong hạnh phúc.",
+            "Hành trình trọn đời bên nhau...\nAnh sẽ cùng em đi qua mọi giông bão."
+        ];
+        let customMainWish = "Cảm ơn em đã đến và làm\nthanh xuân của anh trở nên\nrực rỡ hơn bao giờ hết.\n\nAnh yêu em! ❤️";
+
+        if (isPreview) {
+            // Show preview banner
+            const banner = document.createElement('div');
+            banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#ff3366,#ff9933);color:#fff;text-align:center;font-size:0.72rem;font-weight:700;letter-spacing:1.5px;padding:5px;font-family:Montserrat,sans-serif;text-transform:uppercase';
+            banner.innerText = '✦ CHẾ ĐỘ XEM THỬ – KHÔNG PHẢI BẢN THẬT ✦';
+            document.body.appendChild(banner);
+
+            const previewData = localStorage.getItem('local_gift_preview');
+            if (previewData) {
+                try {
+                    const data = JSON.parse(previewData);
+                    if (data.images && data.images.length > 0) {
+                        for(let i = 0; i < 4; i++) {
+                            if(data.images[i]) customImages[i] = data.images[i];
+                        }
+                    }
+                    if (data.wishes && data.wishes.length > 0) {
+                        for(let i = 0; i < 4; i++) {
+                            if(data.wishes[i]) customWishes[i] = data.wishes[i];
+                        }
+                    }
+                    if (data.wishes && data.wishes[4]) {
+                        customMainWish = data.wishes[4];
+                    }
+                } catch(e) {
+                    console.error("Preview data parse error", e);
+                }
+            }
+
+            // Apply custom configurations to DOM
+            document.addEventListener('DOMContentLoaded', () => {
+                const wrappers = document.querySelectorAll('.polaroid-wrapper');
+                const items = document.querySelectorAll('.item');
+                
+                wrappers.forEach((wrap, idx) => {
+                    const img = wrap.querySelector('.polaroid-front img');
+                    const text = wrap.querySelector('.polaroid-back .back-text');
+                    if (img && customImages[idx]) img.src = customImages[idx];
+                    if (text && customWishes[idx]) text.innerText = customWishes[idx];
+                });
+
+                items.forEach((item, idx) => {
+                    const desc = item.querySelector('.content .desc');
+                    if (desc && customWishes[idx]) desc.innerText = customWishes[idx].replace('\n', ' ');
+                });
+            });
+        }
+
+        // Music logic (Mocked for demo)
+        let isPlaying = false;
+        function toggleMusic() {
+            isPlaying = !isPlaying;
+            const player = document.querySelector('.music-player');
+            const text = document.getElementById('musicText');
+            if(isPlaying) {
+                player.classList.remove('paused');
+                text.innerText = 'Đang phát...';
+            } else {
+                player.classList.add('paused');
+                text.innerText = 'Phát nhạc';
+            }
+        }
+
+        // Scroll observer for timeline items
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                }
+            });
+        }, { threshold: 0.3 });
+        document.querySelectorAll('.item').forEach(item => observer.observe(item));
+
+        // SVG Path draw on scroll & neon heartbeat color run
+        const path = document.getElementById('pathLine');
+        const pathLength = path.getTotalLength();
+        window.addEventListener('scroll', () => {
+            const scrollPercent = (document.body.scrollTop + document.documentElement.scrollTop) / (document.documentElement.scrollHeight - document.documentElement.clientHeight);
+            const draw = pathLength * scrollPercent;
+            path.style.strokeDashoffset = pathLength - draw;
+            
+            // Pulse the color dynamically based on scrolling (Luxury champagne gold pulse)
+            const pulseGlow = 180 + Math.abs(window.scrollY % 70);
+            path.style.stroke = `rgb(${pulseGlow}, ${pulseGlow - 30}, 128)`;
+        });
+
+        // Falling particles (ambient)
+        function createAmbientParticles() {
+            for(let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                const isRose = Math.random() < 0.20; // 20% là bông hoa
+                particle.className = `particle ${isRose ? 'type-rose' : 'type-petal'}`;
+                
+                const size = isRose ? (Math.random() * 10 + 20) : (Math.random() * 8 + 12);
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animationDuration = Math.random() * 12 + 10 + 's';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                document.body.appendChild(particle);
+            }
+        }
+        createAmbientParticles();
+        
+        // Rose Petals raining
+        function rainPetals() {
+            for(let i = 0; i < 45; i++) {
+                setTimeout(() => {
+                    const petal = document.createElement('div');
+                    const isRose = Math.random() < 0.15; // 15% là bông hoa
+                    petal.className = `petal ${isRose ? 'type-rose' : 'type-petal'}`;
+                    
+                    const size = isRose ? (Math.random() * 15 + 30) : (Math.random() * 10 + 25);
+                    petal.style.width = size + 'px';
+                    petal.style.height = size + 'px';
+                    petal.style.left = Math.random() * 100 + 'vw';
+                    petal.style.animationDuration = Math.random() * 3 + 4 + 's';
+                    document.body.appendChild(petal);
+                    setTimeout(() => petal.remove(), 7000);
+                }, i * 150);
+            }
+        }
+
+        // Letter open
+        let opened = false;
+        const letterText = customMainWish;
+        
+        function breakSealAndOpen(el) {
+            if(opened) return;
+            opened = true;
+            
+            // 1. Break the seal
+            const seal = document.getElementById('waxSeal');
+            seal.classList.add('broken');
+            
+            // 2. Open envelope and rain petals after seal breaks
+            setTimeout(() => {
+                el.classList.add('open');
+                rainPetals();
+                
+                // Ẩn tiêu đề và dòng gợi ý để tránh đè chữ
+                document.getElementById('letterTitle').style.opacity = '0';
+                document.getElementById('letterHint').style.opacity = '0';
+                
+                // 3. Trigger typewriter after letter slides up
+                setTimeout(() => {
+                    const target = document.getElementById('typeText');
+                    target.classList.add('typing');
+                    let i = 0;
+                    const typing = setInterval(() => {
+                        if (i < letterText.length) {
+                            target.innerText += letterText.charAt(i);
+                            i++;
+                        } else {
+                            clearInterval(typing);
+                            target.classList.remove('typing');
+                        }
+                    }, 100);
+                }, 2000);
+            }, 500); // Wait 0.5s for seal animation
+        }
+    </script>
+</body>
+</html>

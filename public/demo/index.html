@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mật Mã Tình Yêu & Happy Birthday</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Audio -->
+        <audio id="bgMusic" loop><source src="https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-extra-long-1144.mp3" type="audio/mpeg"></audio>
+        <audio id="hbdMusic"><source src="https://assets.mixkit.co/music/preview/mixkit-happy-birthday-to-you-guitar-158.mp3" type="audio/mpeg"></audio>
+
+        <!-- STAGE 0: GATE (Mật khẩu) -->
+        <div id="stage-gate" class="stage active">
+            <div class="lock-box">
+                <i class="fa-solid fa-shield-halved lock-icon"></i>
+                <h2>Hệ Thống Phân Tích Ký Ức</h2>
+                <p>Nhập mã số định danh cá nhân của anh (8 số) để truy cập:</p>
+                <input type="password" id="gatePass" placeholder="Nhập mã..." pattern="\d*">
+                <button id="gateBtn">TRUY CẬP</button>
+            </div>
+        </div>
+
+        <!-- STAGE 1: SWIPE (Tinder) -->
+        <div id="stage-swipe" class="stage">
+            <h1 class="swipe-title">Vũ Trụ Của Chúng Mình</h1>
+            <p class="swipe-hint">Kéo ảnh sang MÀU XANH để đi tiếp nhé!</p>
+            <div id="tinderCard" class="tinder-card" style="background-image: url('images/demo_couple.png'); background-size: cover; background-position: center;">
+                <div class="card-inner" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); height: 100%; display: flex; flex-direction: column; justify-content: flex-end; border-radius: 30px;">
+                    <h2 style="color:white; text-shadow: 2px 2px 4px #000;">Yêu Em Không?</h2>
+                    <div class="card-actions">
+                        <div class="action-btn no"><i class="fa-solid fa-xmark"></i></div>
+                        <div class="action-btn yes"><i class="fa-solid fa-heart"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STAGE 2: PUZZLE (Ghép Hình) -->
+        <div id="stage-puzzle" class="stage">
+            <h2 class="stage-title">Mảnh Ghép Kỷ Niệm</h2>
+            <p class="hint-text">Chạm để đổi chỗ 2 mảnh ghép cho đúng nhé</p>
+            <div class="puzzle-board" id="puzzleBoard">
+                <!-- 9 tiles sẽ được gen ra bởi JS -->
+            </div>
+            <button id="skipPuzzleBtn" class="hidden-btn" onclick="skipPuzzle()">Bỏ qua thử thách</button>
+        </div>
+
+        <!-- STAGE 3: CHAT (Tin nhắn giấu mã) -->
+        <div id="stage-chat" class="stage">
+            <div class="phone-header">
+                <div class="avatar"><img src="images/demo_couple.png" style="width:100%; height:100%; border-radius:50%; object-fit:cover;"></div>
+                <span class="name">My Love ❤️</span>
+            </div>
+            <div class="chat-area" id="chatArea"></div>
+            <div class="phone-input">
+                <div class="imessage-input" id="typeIndicator">...</div>
+            </div>
+        </div>
+
+        <!-- STAGE 4: MAP (Bản đồ) -->
+        <div id="stage-map" class="stage">
+            <h2 class="stage-title" style="margin-top:20px;">Bản Đồ Kỷ Niệm</h2>
+            <div class="map-bg">
+                <!-- Rải thật nhiều ảnh mới trên map -->
+                <div class="pin" style="top: 10%; left: 15%;" onclick="openMapMsg(this, 'Một kỷ niệm khó quên', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 12%; left: 70%;" onclick="openMapMsg(this, 'Chuyến đi ấy...', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 22%; left: 40%;" onclick="openMapMsg(this, 'Nhớ lúc này không anh?', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 30%; left: 80%;" onclick="openMapMsg(this, 'Dễ thương xỉu', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 35%; left: 15%;" onclick="openMapMsg(this, 'Đi cà phê nè', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 45%; left: 85%;" onclick="openMapMsg(this, 'Mình đi chơi vui dã man!', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 50%; left: 20%;" onclick="openMapMsg(this, 'Trời hôm đó thật đẹp', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 60%; left: 75%;" onclick="openMapMsg(this, 'Lại là đôi uyên ương nè.', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 65%; left: 10%;" onclick="openMapMsg(this, 'Kỷ niệm đẹp', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 75%; left: 55%;" onclick="openMapMsg(this, 'Góc nghiêng thần thánh.', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 80%; left: 85%;" onclick="openMapMsg(this, 'Chụp hình chill chill', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 85%; left: 25%;" onclick="openMapMsg(this, 'Nhìn yêu quá', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="pin" style="top: 92%; left: 60%;" onclick="openMapMsg(this, 'Anh đep trai quá!', 'images/demo_couple.png')"><i class="fa-solid fa-location-dot"></i></div>
+
+                <div class="pin vault-pin" id="vaultPin" style="top: 45%; left: 45%; display: none;" onclick="goToVault()">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div style="animation: pulse 1s infinite alternate;">Tình yêu của em</div>
+                </div>
+            </div>
+            <!-- Polaroid Modal -->
+            <div id="mapModal" class="modal">
+                <div class="polaroid" style="padding:15px; width: 85%;">
+                    <img id="polaroidImg" src="" style="width:100%; border-radius:10px;" alt="">
+                    <p id="mapText" class="polaroid-text" style="font-size:1.2rem; margin-top:15px;"></p>
+                    <button class="close-btn" onclick="closeMapMsg()">Đóng</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STAGE 5: VAULT (Két Sắt) -->
+        <div id="stage-vault" class="stage">
+            <div class="vault-container">
+                <h2>KÉT SẮT KHÔNG GIAN</h2>
+                <p style="margin-bottom: 20px; font-size: 0.9rem;">Nhập mã khóa không gian để mở:</p>
+                <div class="vault-display" id="vaultDisplay">_ _ _</div>
+                <div class="keypad">
+                    <button class="key" onclick="pressKey(1)">1</button><button class="key" onclick="pressKey(2)">2</button><button class="key" onclick="pressKey(3)">3</button>
+                    <button class="key" onclick="pressKey(4)">4</button><button class="key" onclick="pressKey(5)">5</button><button class="key" onclick="pressKey(6)">6</button>
+                    <button class="key" onclick="pressKey(7)">7</button><button class="key" onclick="pressKey(8)">8</button><button class="key" onclick="pressKey(9)">9</button>
+                    <button class="key clear" onclick="clearVault()"><i class="fa-solid fa-delete-left"></i></button>
+                    <button class="key" onclick="pressKey(0)">0</button>
+                    <button class="key enter" onclick="checkVault()"><i class="fa-solid fa-check"></i></button>
+                </div>
+                <p id="vaultError" style="color:#ff4b2b; opacity:0; margin-top:15px; font-weight:bold;">SAI MÃ! Quyền truy cập bị từ chối!</p>
+            </div>
+        </div>
+
+        <!-- STAGE 6: FINAL (Sinh Nhật) -->
+        <div id="stage-final" class="stage" style="background: #000; overflow: hidden; position: relative;">
+            
+            <!-- Floating Gallery Background -->
+            <div id="floatingGallery" class="floating-gallery" style="display:none; opacity:0;">
+                <img src="images/demo_couple.png" class="float-img img1">
+                <img src="images/demo_couple.png" class="float-img img2">
+                <img src="images/demo_couple.png" class="float-img img3">
+                <img src="images/demo_couple.png" class="float-img img4">
+                <img src="images/demo_couple.png" class="float-img img5">
+            </div>
+
+            <div class="final-container" style="justify-content: flex-start; padding-top: 30px; position:relative; z-index:10; width:100%; height:100%; overflow-y:auto; padding-bottom: 50px;">
+                
+                <h2 id="suspenseText" style="color: #fff; font-family: 'Space Mono', monospace; font-size: 1.2rem; text-align:center; margin-top: 50%; opacity: 0; transition: opacity 2s;">Đang phân tích dữ liệu...</h2>
+
+                <h1 id="hbdText" style="display:none; color: #f1c40f; font-family: 'Playfair Display'; font-size: 2.2rem; text-align:center; text-shadow: 0 0 20px #f1c40f; margin: 0; animation: pulse 2s infinite;">HAPPY BIRTHDAY!</h1>
+                <p id="hbdSub" style="display:none; color: white; text-align:center; font-size:1.1rem; margin-top:10px; padding: 0 15px; line-height: 1.5;">Chúc mừng sinh nhật anh người yêu của em! Tuổi mới luôn vui vẻ và hạnh phúc nhé. Cảm ơn anh vì đã luôn yêu thương và che chở cho em suốt thời gian qua. ❤️</p>
+
+                <!-- Đồng hồ thời gian yêu nhau -->
+                <div id="timerContainer" style="display:none; width: 100%; margin-top: 20px;">
+                    <div class="timer-card" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); padding: 20px; border-radius: 20px;">
+                        <h3 style="color:#f1c40f; font-size: 1.3rem; margin: 0 0 15px 0;">Mình đã yêu nhau được...</h3>
+                        <div class="timer-display" id="loveTimer">
+                            <div class="time-block"><span id="tYears">0</span><small>Năm</small></div>
+                            <div class="time-block"><span id="tMonths">0</span><small>Tháng</small></div>
+                            <div class="time-block"><span id="tDays">0</span><small>Ngày</small></div>
+                            <div class="time-block"><span id="tHours">0</span><small>Giờ</small></div>
+                            <div class="time-block"><span id="tMins">0</span><small>Phút</small></div>
+                            <div class="time-block"><span id="tSecs">0</span><small>Giây</small></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bánh sinh nhật -->
+                <div class="cake-container" id="cakeContainer" style="display:none;">
+                    <p style="color:#fff; text-align:center; font-style:italic; margin-bottom:20px;">Chạm vào nến để thổi tắt đi anh yêu!</p>
+                    <div class="cake" style="width: 250px; height: 250px; background: none; position: relative; margin: 0 auto;">
+                        <img src="images/cake.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+                        <!-- Nến (tuổi 32 tượng trưng 3 nến) -->
+                        <div class="candle c1" style="bottom: 200px; left: 80px;" onclick="blowCandle(this)"><div class="flame"></div></div>
+                        <div class="candle c2" style="bottom: 215px; left: 120px;" onclick="blowCandle(this)"><div class="flame"></div></div>
+                        <div class="candle c3" style="bottom: 200px; left: 160px;" onclick="blowCandle(this)"><div class="flame"></div></div>
+                    </div>
+                </div>
+
+                <div class="scratch-container" id="scratchSection" style="display: none; margin-top: 20px;">
+                    <p class="scratch-instruction">Cào lớp bạc này để nhận quà sinh nhật nhé!</p>
+                    <div class="scratch-wrap" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); padding: 15px;">
+                        <div class="scratch-prize">
+                            <img src="images/demo_couple.png" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #fff; margin-bottom:5px;">
+                            <h4 style="margin:5px 0;">Vé Yêu Cầu</h4>
+                            <p style="font-size:0.9rem;">Đặc quyền yêu cầu vợ làm bất cứ điều gì!</p>
+                        </div>
+                        <canvas id="scratchCanvas"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script src="script.js?v=4"></script>
+</body>
+</html>
