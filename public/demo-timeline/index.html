@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memory Timeline - Premium Luxury</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Montserrat:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         html, body { margin: 0; padding: 0; background: #0c0c0e; color: #c5a880; font-family: 'Montserrat', sans-serif; overflow-x: hidden; letter-spacing: 0.5px; -ms-overflow-style: none; scrollbar-width: none; }
         html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
@@ -223,9 +224,10 @@
     </div>
 
     <script>
-        // Check for local preview
+        // Check for local preview or generated gift link
         const urlParams = new URLSearchParams(window.location.search);
         const isPreview = urlParams.get('preview') === 'true';
+        const giftId = urlParams.get('id');
         
         let customImages = ["images/photo_1.png", "images/photo_2.png", "images/photo_3.png", "images/photo_4.png"];
         let customWishes = [
@@ -236,52 +238,83 @@
         ];
         let customMainWish = "Cảm ơn em đã đến và làm\nthanh xuân của anh trở nên\nrực rỡ hơn bao giờ hết.\n\nAnh yêu em! ❤️";
 
+        // Initialize Supabase client
+        const supabaseUrl = 'https://yuprzftcvawqybjixkmt.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1cHJ6ZnRjdmF3cXliaml4a210Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3MzQ5MjksImV4cCI6MjA5OTMxMDkyOX0.6veKPAL05Ge24yhHxuZUHZXB-YVVMSTAgN1kZYgf1qQ';
+        const supabaseClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
+
+        async function loadGiftConfiguration() {
+            if (isPreview) {
+                const previewData = localStorage.getItem('local_gift_preview');
+                if (previewData) {
+                    applyData(JSON.parse(previewData));
+                }
+            } else if (giftId && supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('gifts')
+                        .select('*')
+                        .eq('id', giftId)
+                        .single();
+                    if (error) throw error;
+                    if (data) {
+                        applyData({
+                            anniversaryDate: data.anniversary_date,
+                            images: data.images,
+                            wishes: data.wishes
+                        });
+                    }
+                } catch(e) {
+                    console.error("Supabase load error, checking localStorage fallback", e);
+                    const localData = localStorage.getItem(`gift_data_${giftId}`);
+                    if (localData) applyData(JSON.parse(localData));
+                }
+            }
+        }
+
+        function applyData(data) {
+            if (data.images && data.images.length > 0) {
+                for(let i = 0; i < 4; i++) {
+                    if(data.images[i]) customImages[i] = data.images[i];
+                }
+            }
+            if (data.wishes && data.wishes.length > 0) {
+                for(let i = 0; i < 4; i++) {
+                    if(data.wishes[i]) customWishes[i] = data.wishes[i];
+                }
+            }
+            if (data.wishes && data.wishes[4]) {
+                customMainWish = data.wishes[4];
+                // Update letterText variable dynamically
+                window.letterText = customMainWish;
+            }
+
+            // Sync layout changes
+            const wrappers = document.querySelectorAll('.polaroid-wrapper');
+            const items = document.querySelectorAll('.item');
+            
+            wrappers.forEach((wrap, idx) => {
+                const img = wrap.querySelector('.polaroid-front img');
+                const text = wrap.querySelector('.polaroid-back .back-text');
+                if (img && customImages[idx]) img.src = customImages[idx];
+                if (text && customWishes[idx]) text.innerText = customWishes[idx];
+            });
+
+            items.forEach((item, idx) => {
+                const desc = item.querySelector('.content .desc');
+                if (desc && customWishes[idx]) desc.innerText = customWishes[idx].replace('\n', ' ');
+            });
+        }
+
+        // Run loader immediately
+        loadGiftConfiguration();
+
+        // Show preview banner if in preview mode
         if (isPreview) {
-            // Show preview banner
             const banner = document.createElement('div');
             banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#ff3366,#ff9933);color:#fff;text-align:center;font-size:0.72rem;font-weight:700;letter-spacing:1.5px;padding:5px;font-family:Montserrat,sans-serif;text-transform:uppercase';
             banner.innerText = '✦ CHẾ ĐỘ XEM THỬ – KHÔNG PHẢI BẢN THẬT ✦';
             document.body.appendChild(banner);
-
-            const previewData = localStorage.getItem('local_gift_preview');
-            if (previewData) {
-                try {
-                    const data = JSON.parse(previewData);
-                    if (data.images && data.images.length > 0) {
-                        for(let i = 0; i < 4; i++) {
-                            if(data.images[i]) customImages[i] = data.images[i];
-                        }
-                    }
-                    if (data.wishes && data.wishes.length > 0) {
-                        for(let i = 0; i < 4; i++) {
-                            if(data.wishes[i]) customWishes[i] = data.wishes[i];
-                        }
-                    }
-                    if (data.wishes && data.wishes[4]) {
-                        customMainWish = data.wishes[4];
-                    }
-                } catch(e) {
-                    console.error("Preview data parse error", e);
-                }
-            }
-
-            // Apply custom configurations to DOM
-            document.addEventListener('DOMContentLoaded', () => {
-                const wrappers = document.querySelectorAll('.polaroid-wrapper');
-                const items = document.querySelectorAll('.item');
-                
-                wrappers.forEach((wrap, idx) => {
-                    const img = wrap.querySelector('.polaroid-front img');
-                    const text = wrap.querySelector('.polaroid-back .back-text');
-                    if (img && customImages[idx]) img.src = customImages[idx];
-                    if (text && customWishes[idx]) text.innerText = customWishes[idx];
-                });
-
-                items.forEach((item, idx) => {
-                    const desc = item.querySelector('.content .desc');
-                    if (desc && customWishes[idx]) desc.innerText = customWishes[idx].replace('\n', ' ');
-                });
-            });
         }
 
         // Music logic (Mocked for demo)

@@ -41,65 +41,90 @@ document.addEventListener('DOMContentLoaded', () => {
       ];
     let customMainWish = "Chúc mừng sinh nhật anh người yêu của em! Tuổi mới luôn vui vẻ và hạnh phúc nhé. Cảm ơn anh vì đã luôn yêu thương và che chở cho em suốt thời gian qua. ❤️";
     
-    if (isGiftLink) {
-        const dataKey = isPreview ? 'local_gift_preview' : `gift_data_${giftId}`;
-        const previewData = localStorage.getItem(dataKey);
-        if (previewData) {
+    // Initialize Supabase client
+    const supabaseUrl = 'https://yuprzftcvawqybjixkmt.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1cHJ6ZnRjdmF3cXliaml4a210Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3MzQ5MjksImV4cCI6MjA5OTMxMDkyOX0.6veKPAL05Ge24yhHxuZUHZXB-YVVMSTAgN1kZYgf1qQ';
+    const supabaseClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
+
+    async function loadGiftConfiguration() {
+        if (isPreview) {
+            const previewData = localStorage.getItem('local_gift_preview');
+            if (previewData) {
+                applyData(JSON.parse(previewData));
+            }
+        } else if (giftId && supabaseClient) {
             try {
-                const data = JSON.parse(previewData);
-                if (data.password) {
-                    GATE_PASS = data.password;
-                }
-                if (data.anniversaryDate) {
-                    const daysAgo = parseInt(data.anniversaryDate) || 0;
-                    if (daysAgo > 0) {
-                        const targetDate = new Date();
-                        targetDate.setDate(targetDate.getDate() - daysAgo);
-                        START_DATE = targetDate;
-                    }
-                }
-                if (data.images && data.images.length > 0) {
-                    for(let i = 0; i < 4; i++) {
-                        if(data.images[i]) customImages[i] = data.images[i];
-                    }
-                }
-                if (data.wishes && data.wishes.length > 0) {
-                    for(let i = 0; i < 4; i++) {
-                        if(data.wishes[i]) customWishes[i] = data.wishes[i];
-                    }
-                }
-                if (data.wishes && data.wishes[4]) {
-                    customMainWish = data.wishes[4];
+                const { data, error } = await supabaseClient
+                    .from('gifts')
+                    .select('*')
+                    .eq('id', giftId)
+                    .single();
+                if (error) throw error;
+                if (data) {
+                    applyData({
+                        password: data.password,
+                        anniversaryDate: data.anniversary_date,
+                        images: data.images,
+                        wishes: data.wishes
+                    });
                 }
             } catch(e) {
-                console.error("Preview data parse error", e);
+                console.error("Supabase load error, checking localStorage fallback", e);
+                const localData = localStorage.getItem(`gift_data_${giftId}`);
+                if (localData) applyData(JSON.parse(localData));
             }
         }
     }
 
-    if (isPreview) {
-        // 1. Update Tinder Card background
+    function applyData(data) {
+        if (data.password) {
+            GATE_PASS = data.password;
+        }
+        if (data.anniversaryDate) {
+            const daysAgo = parseInt(data.anniversaryDate) || 0;
+            if (daysAgo > 0) {
+                const targetDate = new Date();
+                targetDate.setDate(targetDate.getDate() - daysAgo);
+                START_DATE = targetDate;
+                // Re-calculate anniversary clock if function exists
+                if (typeof updateLoveTimer === 'function') updateLoveTimer();
+            }
+        }
+        if (data.images && data.images.length > 0) {
+            for(let i = 0; i < 4; i++) {
+                if(data.images[i]) customImages[i] = data.images[i];
+            }
+        }
+        if (data.wishes && data.wishes.length > 0) {
+            for(let i = 0; i < 4; i++) {
+                if(data.wishes[i]) customWishes[i] = data.wishes[i];
+            }
+        }
+        if (data.wishes && data.wishes[4]) {
+            customMainWish = data.wishes[4];
+        }
+
+        // Apply dynamically to DOM
         const tc = document.getElementById('tinderCard');
         if (tc) {
             tc.style.backgroundImage = `url('${customImages[0]}')`;
         }
         
-        // 2. Update Avatar images & other template static images
         document.querySelectorAll('img').forEach(img => {
             if (img.src.includes('demo_couple.png') || img.src.endsWith('demo_couple.png') || img.getAttribute('src').includes('demo_couple.png')) {
                 img.src = customImages[0];
             }
         });
         
-        // 3. Update main HBD text wish
         const hbdSub = document.getElementById('hbdSub');
         if (hbdSub) {
             hbdSub.innerText = customMainWish;
         }
     }
 
+    // Run loader immediately
+    loadGiftConfiguration();
 
-    // (Preview bypass already handled above)
 
     // --- STAGE 0: GATE ---
     const gateBtn = document.getElementById('gateBtn');
