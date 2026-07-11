@@ -459,8 +459,8 @@ export default function DemoShowcase() {
               ))}
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '10px' }}>
-            <div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+            <div style={{ gridColumn: 'span 2' }}>
               <span style={S.label}>3. Thư chúc mừng sinh nhật kết bài</span>
               <textarea 
                 value={wishes[4]}
@@ -475,9 +475,13 @@ export default function DemoShowcase() {
               />
             </div>
             <div>
-              <span style={S.label}>Số điện thoại của bạn *</span>
-              <input type="text" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} style={{ ...S.input, height: '46px', marginTop: '4px' }} placeholder="Nhập SĐT..." />
+              <span style={S.label}>Số ngày đếm yêu</span>
+              <input type="number" value={anniversaryDate} onChange={e => setAnniversaryDate(e.target.value)} style={S.input} />
             </div>
+          </div>
+          <div>
+            <span style={S.label}>Số điện thoại của bạn *</span>
+            <input type="text" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} style={S.input} placeholder="Nhập SĐT..." />
           </div>
         </>
       );

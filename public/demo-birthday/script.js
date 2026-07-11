@@ -53,7 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(initScrollObserver, 500);
     }
 
+    let targetLoveDays = 1258;
+
     function applyData(data) {
+        if (data.anniversaryDate) {
+            targetLoveDays = parseInt(data.anniversaryDate) || 1258;
+            const daysEl = document.getElementById('loveDaysVal');
+            if (daysEl) daysEl.innerText = targetLoveDays;
+        }
         if (data.images && data.images.length > 0) {
             for(let i = 0; i < 4; i++) {
                 if(data.images[i]) customImages[i] = data.images[i];
@@ -87,6 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
     introPlayer.addEventListener('click', () => {
         bgMusic.play().catch(e => console.log("Audio auto-play blocked"));
         
+        // Start countup love days animation
+        startLoveDaysCountUp();
+
         // Trigger record animations
         if (stylusArm) stylusArm.classList.add('active');
         if (vinylDisc) {
@@ -95,13 +105,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 400);
         }
 
-        // Delay screen switch slightly to let user enjoy the tactile record player touch
+        // Delay screen switch slightly to let user enjoy the tactile record player touch and countup
         setTimeout(() => {
             document.getElementById('stage-intro').style.display = 'none';
             document.getElementById('stage-content').style.display = 'flex';
             createFallingParticles();
-        }, 1300);
+        }, 2800);
     });
+
+    function startLoveDaysCountUp() {
+        const daysEl = document.getElementById('loveDaysVal');
+        if (!daysEl) return;
+        
+        let start = 0;
+        const duration = 2000; // 2 seconds animation
+        const startTime = performance.now();
+        
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Ease out function
+            const easeProgress = 1 - Math.pow(1 - progress, 3);
+            const currentDays = Math.floor(easeProgress * targetLoveDays);
+            
+            daysEl.innerText = currentDays;
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+        requestAnimationFrame(update);
+    }
 
     // 3. Falling Gold Dust Particles Ambient Effect
     function createFallingParticles() {
