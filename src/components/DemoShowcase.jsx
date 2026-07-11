@@ -60,6 +60,8 @@ export default function DemoShowcase() {
 
   // Configuration States
   const [customerPhone, setCustomerPhone] = useState('');
+  const [senderName, setSenderName] = useState('Anh');
+  const [receiverName, setReceiverName] = useState('Em');
   const [anniversaryDate, setAnniversaryDate] = useState('1258');
   const [password, setPassword] = useState('23042026');
   
@@ -185,13 +187,11 @@ export default function DemoShowcase() {
       alert("Vui lòng nhập Số điện thoại liên hệ để nhận link web!");
       return;
     }
-    // Apply configuration one last time to make sure localStorage is updated
     applyConfiguration();
     setShowPayment(true);
   };
 
   const handlePaymentSuccess = async () => {
-    // Generate a unique ID for the customer's web gift
     const randomId = 'gift_' + Math.random().toString(36).substring(2, 10);
     const linkPath = templates[activeTab].id === 'love-escape' ? 'demo' : templates[activeTab].id === 'timeline' ? 'demo-timeline' : 'demo-box';
     const finalUrl = `${window.location.origin}/${linkPath}/index.html?id=${randomId}&gift=true`;
@@ -211,7 +211,6 @@ export default function DemoShowcase() {
 
       if (error) throw error;
 
-      // Keep localStorage as temporary local cache
       localStorage.setItem(`gift_data_${randomId}`, JSON.stringify({ wishes, images, anniversaryDate, password }));
 
       setGeneratedLink(finalUrl);
@@ -232,9 +231,23 @@ export default function DemoShowcase() {
   const renderDynamicForm = () => {
     const currentTpl = templates[activeTab].id;
 
+    const namesSection = (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '8px' }}>
+        <div>
+          <span style={S.label}>Tên Người Tặng</span>
+          <input type="text" value={senderName} onChange={e => setSenderName(e.target.value)} style={S.input} placeholder="Ví dụ: Anh" />
+        </div>
+        <div>
+          <span style={S.label}>Tên Người Nhận</span>
+          <input type="text" value={receiverName} onChange={e => setReceiverName(e.target.value)} style={S.input} placeholder="Ví dụ: Em" />
+        </div>
+      </div>
+    );
+
     if (currentTpl === 'love-escape') {
       return (
         <>
+          {namesSection}
           <div>
             <span style={S.label}>1. Tải lên 4 ảnh đôi</span>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
@@ -295,6 +308,7 @@ export default function DemoShowcase() {
     if (currentTpl === 'timeline') {
       return (
         <>
+          {namesSection}
           <div>
             <span style={S.label}>1. Tải lên 4 ảnh dọc (Polaroid)</span>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
@@ -348,6 +362,7 @@ export default function DemoShowcase() {
     if (currentTpl === 'memory-jar') {
       return (
         <>
+          {namesSection}
           <div>
             <span style={S.label}>1. Tải lên 4 ảnh đom đóm</span>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
@@ -546,14 +561,13 @@ export default function DemoShowcase() {
                           }
                           ctx.globalAlpha = 1.0;
 
-                          // D. Title text styling (VINTAGE GOLD)
+                          // D. Title text styling (VINTAGE GOLD) - CUSTOMIZED FOR USER NAMES
                           ctx.textAlign = 'center';
                           ctx.font = 'bold 36px "Outfit", sans-serif';
                           ctx.fillStyle = '#ff9933';
-                          // Add shadow
                           ctx.shadowColor = 'rgba(255, 153, 51, 0.5)';
                           ctx.shadowBlur = 10;
-                          ctx.fillText('WEBSITE QUÀ TẶNG', 250, 95);
+                          ctx.fillText(`${senderName.toUpperCase()} GỬI TẶNG ${receiverName.toUpperCase()}`, 250, 95);
                           
                           ctx.font = '300 16px "Outfit", sans-serif';
                           ctx.fillStyle = '#aaa';
@@ -597,13 +611,13 @@ export default function DemoShowcase() {
                           ctx.font = '300 12px "Outfit", sans-serif';
                           ctx.fillStyle = '#777';
                           ctx.shadowBlur = 0;
-                          ctx.fillText('Thiết kế bởi GiftWeb Studio', 250, 620);
+                          ctx.fillText('Nhận quà và thắp sáng yêu thương', 250, 620);
                           
                           // I. Export and Trigger Download
                           const finalDataUrl = canvas.toDataURL('image/png');
                           const link = document.createElement('a');
                           link.href = finalDataUrl;
-                          link.download = 'Thiep_Qua_Tang_Mien_Phi.png';
+                          link.download = `Thiep_Yeu_Thuong_${senderName}_Tang_${receiverName}.png`;
                           document.body.appendChild(link);
                           link.click();
                           document.body.removeChild(link);
@@ -645,7 +659,7 @@ export default function DemoShowcase() {
                   <button onClick={copyGeneratedLink} className="btn btn-primary" style={{ flex: 1, padding: '12px 0' }}>
                     Copy Đường Dẫn
                   </button>
-                  <button onClick={() => setShowSuccess(false)} className="btn btn-outline" style={{ flex: 1, padding: '12px 0', borderColor: 'rgba(255,255,255,0.1)' }}>
+                  <button onClick={() => setShowSuccess(false)} className="btn btn-outline" style={{ flex: 1, padding: '12px 0', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                     Tiếp tục tạo mẫu mới
                   </button>
                 </div>
