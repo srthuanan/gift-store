@@ -487,15 +487,27 @@ export default function DemoShowcase() {
                   <h3 style={{ fontSize: '1.8rem', color: '#fff', margin: '0 0 8px' }}>Tạo Link Quà Tặng Thành Công!</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Giao diện của bạn đã được xuất ra hệ thống cloud riêng.</p>
                 </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px 16px' }}>
+                  <div style={{ background: '#fff', padding: '10px', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.5)', display: 'inline-block' }}>
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(generatedLink)}`}
+                      alt="Mã QR Quà Tặng"
+                      style={{ width: '160px', height: '160px', display: 'block' }}
+                    />
+                  </div>
+                  <span style={{ fontSize: '0.8rem', color: '#ff3366', fontWeight: '600', letterSpacing: '0.5px' }}>
+                    QUÉT MÃ QR ĐỂ NHẬN QUÀ TẶNG 🎁
+                  </span>
+                </div>
                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px', wordBreak: 'break-all' }}>
-                  <span style={S.label}>Đường dẫn riêng của bạn</span>
-                  <a href={generatedLink} target="_blank" rel="noreferrer" style={{ color: '#ff3366', fontWeight: 'bold', fontSize: '0.95rem', textDecoration: 'underline' }}>
+                  <span style={S.label}>Hoặc copy đường dẫn riêng</span>
+                  <a href={generatedLink} target="_blank" rel="noreferrer" style={{ color: '#aaa', fontWeight: '500', fontSize: '0.88rem', textDecoration: 'underline' }}>
                     {generatedLink}
                   </a>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button onClick={copyGeneratedLink} className="btn btn-primary" style={{ flex: 1, padding: '12px 0' }}>
-                    Copy Link
+                    Copy Đường Dẫn
                   </button>
                   <button onClick={() => setShowSuccess(false)} className="btn btn-outline" style={{ flex: 1, padding: '12px 0', borderColor: 'rgba(255,255,255,0.1)' }}>
                     Tiếp tục tạo mẫu mới
