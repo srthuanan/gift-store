@@ -35,6 +35,15 @@
         h1.title { font-family: 'Cinzel Decorative', serif; font-size: 2.8rem; color: #fff; text-shadow: 0 0 20px rgba(223, 195, 151, 0.5), 0 0 40px rgba(255, 51, 102, 0.3); margin: 0 0 10px; }
         .subtitle { font-size: 0.9rem; letter-spacing: 3px; color: #8c8c94; text-transform: uppercase; }
         
+        /* Maze Puzzle Game styling */
+        .maze-board { width: 300px; height: 300px; border: 3px solid #dfc397; border-radius: 12px; background: #121016; position: relative; box-shadow: 0 20px 45px rgba(0,0,0,0.8); overflow: hidden; touch-action: none; }
+        .maze-ball { width: 20px; height: 20px; border-radius: 50%; background: #ff3366; box-shadow: 0 0 10px #ff3366; position: absolute; top: 15px; left: 15px; transition: top 0.1s, left 0.1s; z-index: 5; }
+        .maze-target { width: 24px; height: 24px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 12px #22c55e; position: absolute; bottom: 15px; right: 15px; display: flex; justify-content: center; align-items: center; font-size: 10px; z-index: 4; }
+        .maze-wall { background: rgba(223, 195, 151, 0.3); position: absolute; border-radius: 2px; }
+        .maze-controls { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 10px; justify-content: center; margin-top: 20px; }
+        .ctrl-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(223,195,151,0.3); border-radius: 8px; color: #fff; font-size: 1.2rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
+        .ctrl-btn:active { background: #dfc397; color: #07060a; }
+
         /* Puzzle Game styling */
         .puzzle-container { width: 300px; height: 300px; border: 3px solid #dfc397; border-radius: 12px; position: relative; background: #121016; box-shadow: 0 20px 45px rgba(0,0,0,0.8); display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 4px; padding: 4px; box-sizing: border-box; overflow: hidden; }
         .puzzle-piece { width: 100%; height: 100%; border-radius: 6px; cursor: grab; background-size: 292px 292px; background-repeat: no-repeat; border: 1px solid rgba(223, 195, 151, 0.25); box-sizing: border-box; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
@@ -174,6 +183,32 @@
         <button class="p-btn" style="margin: 60px 0 100px;" onclick="goToBlowStage()">Tiếp Tục Chặng Cuối ➔</button>
     </div>
 
+    <!-- NEW STAGE 2.3: MAZE LOVE CHASE (Mê cung tình yêu tìm lối thoát) -->
+    <div id="stage-maze" class="stage" style="display: none;">
+        <h1 class="title" style="font-size: 2rem;">Vượt Qua Mê Cung</h1>
+        <p class="subtitle" style="margin-bottom: 25px; max-width: 450px; line-height: 1.6;">Dùng các nút mũi tên để di chuyển chấm hồng trái tim đến gặp chấm xanh lá cây. Mọi rào cản sẽ biến mất khi chúng ta tìm thấy nhau!</p>
+        
+        <div class="maze-board" id="mazeBoard">
+            <div class="maze-ball" id="mazeBall"></div>
+            <div class="maze-target" id="mazeTarget">❤️</div>
+            <!-- Standard maze walls coordinates (Hardcoded coordinates layout) -->
+            <div class="maze-wall" style="top: 0px; left: 100px; width: 6px; height: 180px;"></div>
+            <div class="maze-wall" style="top: 120px; left: 0px; width: 100px; height: 6px;"></div>
+            <div class="maze-wall" style="top: 60px; left: 160px; width: 140px; height: 6px;"></div>
+            <div class="maze-wall" style="top: 60px; left: 160px; width: 6px; height: 180px;"></div>
+            <div class="maze-wall" style="top: 240px; left: 100px; width: 100px; height: 6px;"></div>
+        </div>
+
+        <div class="maze-controls">
+            <div></div>
+            <button class="ctrl-btn" onclick="moveBall('up')">▲</button>
+            <div></div>
+            <button class="ctrl-btn" onclick="moveBall('left')">◀</button>
+            <button class="ctrl-btn" onclick="moveBall('down')">▼</button>
+            <button class="ctrl-btn" onclick="moveBall('right')">▶</button>
+        </div>
+    </div>
+
     <!-- NEW STAGE 2.5: PUZZLE GAME -->
     <div id="stage-puzzle" class="stage" style="display: none;">
         <h1 class="title" style="font-size: 2rem;">Mảnh Ghép Ký Ức</h1>
@@ -234,6 +269,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=7"></script>
 </body>
 </html>

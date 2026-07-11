@@ -249,11 +249,81 @@ document.addEventListener('DOMContentLoaded', () => {
         transition();
     }
 
-    // 5. Navigation from scroll stage to puzzle stage
+    // 5. Navigation from scroll stage to maze stage
     window.goToBlowStage = () => {
         document.getElementById('stage-content').style.display = 'none';
-        document.getElementById('stage-puzzle').style.display = 'flex';
-        initPuzzleGame();
+        document.getElementById('stage-maze').style.display = 'flex';
+        resetMaze();
+    };
+
+    // Maze Game Engine
+    let ballX = 15;
+    let ballY = 15;
+    const mazeWalls = [
+        { x: 100, y: 0, w: 6, h: 180 },
+        { x: 0, y: 120, w: 100, h: 6 },
+        { x: 160, y: 60, w: 140, h: 6 },
+        { x: 160, y: 60, w: 6, h: 180 },
+        { x: 100, y: 240, w: 100, h: 6 }
+    ];
+
+    function resetMaze() {
+        ballX = 15;
+        ballY = 15;
+        const ball = document.getElementById('mazeBall');
+        if (ball) {
+            ball.style.left = ballX + 'px';
+            ball.style.top = ballY + 'px';
+        }
+    }
+
+    window.moveBall = (direction) => {
+        const step = 20;
+        let newX = ballX;
+        let newY = ballY;
+
+        if (direction === 'up') newY -= step;
+        if (direction === 'down') newY += step;
+        if (direction === 'left') newX -= step;
+        if (direction === 'right') newX += step;
+
+        // Boundary constraint
+        if (newX < 0 || newX > 280 || newY < 0 || newY > 280) return;
+
+        // Collision detection with walls
+        const ballSize = 20;
+        let isCollided = false;
+        for (let i = 0; i < mazeWalls.length; i++) {
+            const w = mazeWalls[i];
+            if (
+                newX < w.x + w.w &&
+                newX + ballSize > w.x &&
+                newY < w.y + w.h &&
+                newY + ballSize > w.y
+            ) {
+                isCollided = true;
+                break;
+            }
+        }
+
+        if (!isCollided) {
+            ballX = newX;
+            ballY = newY;
+            const ball = document.getElementById('mazeBall');
+            ball.style.left = ballX + 'px';
+            ball.style.top = ballY + 'px';
+
+            // Check if reached target (260, 260)
+            if (ballX >= 240 && ballY >= 240) {
+                // Winning transition
+                setTimeout(() => {
+                    alert("❤️ Chúng ta đã tìm thấy nhau vượt qua mọi rào cản! Hãy chuyển sang chương tiếp theo.");
+                    document.getElementById('stage-maze').style.display = 'none';
+                    document.getElementById('stage-puzzle').style.display = 'flex';
+                    initPuzzleGame();
+                }, 300);
+            }
+        }
     };
 
     // Puzzle Game Logic
