@@ -503,18 +503,112 @@ export default function DemoShowcase() {
                   <button 
                     onClick={async () => {
                       try {
-                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(generatedLink)}`;
+                        // 1. Fetch the QR code image
+                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(generatedLink)}`;
                         const response = await fetch(qrUrl);
                         const blob = await response.blob();
-                        const blobUrl = URL.createObjectURL(blob);
                         
-                        const link = document.createElement('a');
-                        link.href = blobUrl;
-                        link.download = 'ma_qr_qua_tang.png';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(blobUrl);
+                        // 2. Load QR Image and Draw Beautiful Gift Card on Canvas
+                        const img = new Image();
+                        img.src = URL.createObjectURL(blob);
+                        img.onload = () => {
+                          const canvas = document.createElement('canvas');
+                          canvas.width = 500;
+                          canvas.height = 700;
+                          const ctx = canvas.getContext('2d');
+                          
+                          // A. Draw luxury gradient background (Vibrant Purple to deep Indigo)
+                          const grad = ctx.createLinearGradient(0, 0, 0, 700);
+                          grad.addColorStop(0, '#1f1235');
+                          grad.addColorStop(0.5, '#0f0c29');
+                          grad.addColorStop(1, '#030208');
+                          ctx.fillStyle = grad;
+                          ctx.fillRect(0, 0, 500, 700);
+                          
+                          // B. Draw neon glowing borders
+                          ctx.strokeStyle = 'rgba(255, 51, 102, 0.25)';
+                          ctx.lineWidth = 15;
+                          ctx.strokeRect(15, 15, 470, 670);
+                          ctx.strokeStyle = 'rgba(255, 153, 51, 0.4)';
+                          ctx.lineWidth = 2;
+                          ctx.strokeRect(25, 25, 450, 650);
+
+                          // C. Draw decorative sparkles/stars
+                          ctx.fillStyle = '#fff';
+                          for(let i=0; i<30; i++) {
+                            const x = Math.random() * 460 + 20;
+                            const y = Math.random() * 660 + 20;
+                            const r = Math.random() * 2 + 0.5;
+                            ctx.globalAlpha = Math.random() * 0.7 + 0.3;
+                            ctx.beginPath();
+                            ctx.arc(x, y, r, 0, Math.PI * 2);
+                            ctx.fill();
+                          }
+                          ctx.globalAlpha = 1.0;
+
+                          // D. Title text styling (VINTAGE GOLD)
+                          ctx.textAlign = 'center';
+                          ctx.font = 'bold 36px "Outfit", sans-serif';
+                          ctx.fillStyle = '#ff9933';
+                          // Add shadow
+                          ctx.shadowColor = 'rgba(255, 153, 51, 0.5)';
+                          ctx.shadowBlur = 10;
+                          ctx.fillText('WEBSITE QUÀ TẶNG', 250, 95);
+                          
+                          ctx.font = '300 16px "Outfit", sans-serif';
+                          ctx.fillStyle = '#aaa';
+                          ctx.shadowBlur = 0;
+                          ctx.fillText('✦ THÔNG ĐIỆP BÍ MẬT DÀNH RIÊNG CHO BẠN ✦', 250, 135);
+                          
+                          // E. Draw QR container card (Glassmorphic white)
+                          ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                          ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                          ctx.shadowBlur = 20;
+                          // Round rectangle function
+                          ctx.beginPath();
+                          const rx = 100, ry = 190, rw = 300, rh = 300, rr = 20;
+                          ctx.moveTo(rx+rr, ry);
+                          ctx.lineTo(rx+rw-rr, ry);
+                          ctx.quadraticCurveTo(rx+rw, ry, rx+rw, ry+rr);
+                          ctx.lineTo(rx+rw, ry+rh-rr);
+                          ctx.quadraticCurveTo(rx+rw, ry+rh, rx+rw-rr, ry+rh);
+                          ctx.lineTo(rx+rr, ry+rh);
+                          ctx.quadraticCurveTo(rx, ry+rh, rx, ry+rh-rr);
+                          ctx.lineTo(rx, ry-rr);
+                          ctx.quadraticCurveTo(rx, ry, rx+rr, ry);
+                          ctx.closePath();
+                          ctx.fill();
+
+                          // F. Draw QR Code in the middle
+                          ctx.shadowBlur = 0; // Reset shadow for QR
+                          ctx.drawImage(img, 130, 220, 240, 240);
+
+                          // G. Draw heart icon below QR inside container
+                          ctx.font = '22px sans-serif';
+                          ctx.fillText('❤️', 250, 480);
+
+                          // H. Bottom Instructions
+                          ctx.font = 'italic 18px sans-serif';
+                          ctx.fillStyle = '#ff3366';
+                          ctx.shadowColor = 'rgba(255, 51, 102, 0.4)';
+                          ctx.shadowBlur = 8;
+                          ctx.fillText('Quét mã QR để mở hộp quà ký ức...', 250, 560);
+                          
+                          ctx.font = '300 12px "Outfit", sans-serif';
+                          ctx.fillStyle = '#777';
+                          ctx.shadowBlur = 0;
+                          ctx.fillText('Thiết kế bởi GiftWeb Studio', 250, 620);
+                          
+                          // I. Export and Trigger Download
+                          const finalDataUrl = canvas.toDataURL('image/png');
+                          const link = document.createElement('a');
+                          link.href = finalDataUrl;
+                          link.download = 'Thiep_Qua_Tang_Mien_Phi.png';
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                          URL.revokeObjectURL(img.src);
+                        };
                       } catch (err) {
                         console.error("Lỗi tải ảnh QR:", err);
                         alert("Không thể tải trực tiếp. Bạn vui lòng chụp màn hình hoặc lưu ảnh QR trên nhé!");
